@@ -5,8 +5,9 @@ class SharpApp : Window {
     {
         SetDefaultSize(250, 200);
         SetPosition(WindowPosition.Center);
+        SetIconFromFile("icon.png");
 
-        DeleteEvent += delegate {Application.Quit(); };
+        DeleteEvent += new DeleteEventHandler(OnDelete);
 
         Show();
     }
@@ -16,5 +17,10 @@ class SharpApp : Window {
         Application.Init();
         new SharpApp();
         Application.Run();
+    }
+
+    void OnDelete(object obj, DeleteEventArgs args)
+    {
+        Application.Quit();
     }
 }
