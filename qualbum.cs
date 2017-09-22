@@ -12,7 +12,7 @@ class SharpApp : Window
         DeleteEvent += new DeleteEventHandler(OnDelete);
         
         // All app is a vbox
-        VBox app = new VBox(false, 2);
+        VBox app = new VBox(false, 0);
 
         // Add menu
         MenuBar menuBar = new MenuBar();
@@ -42,30 +42,30 @@ class SharpApp : Window
             helpMenu.Append(about);
 
 
-        app.PackStart(menuBar, false, false, 0);
+        app.PackStart(menuBar, false, true, 0);
 
         // Add toolbar
         Toolbar toolbar = new Toolbar();
         toolbar.ToolbarStyle = ToolbarStyle.Icons;
 
         ToolButton opentb = new ToolButton(Stock.Open);
-        ToolButton opentb2 = new ToolButton(Stock.Open);
-        SeparatorToolItem sep = new SeparatorToolItem();
-        ToolButton quittb = new ToolButton(Stock.Quit);
-        quittb.Clicked += OnExit;
+        //ToolButton opentb2 = new ToolButton(Stock.Open);
+        //SeparatorToolItem sep = new SeparatorToolItem();
+        //ToolButton quittb = new ToolButton(Stock.Quit);
+        //quittb.Clicked += OnExit;
 
         toolbar.Insert(opentb, 0);
-        toolbar.Insert(opentb2, 1);
-        toolbar.Insert(sep, 2);
-        toolbar.Insert(quittb, 3);
+        //toolbar.Insert(opentb2, 1);
+        //toolbar.Insert(sep, 2);
+        //toolbar.Insert(quittb, 3);
 
-        app.PackStart(toolbar, false, false, 3);
+        app.PackStart(toolbar, false, false, 0);
 
         // Define mainscreen
-        HBox mainScreen = new HBox(false, 3);
+        HBox mainScreen = new HBox(false, 0);
 
         Label picLabel = new Label("Picture");
-        VBox sideBar = new VBox(false, 3);
+        VBox sideBar = new VBox(false, 0);
         VSeparator sideBarSeparator = new VSeparator();
 
         mainScreen.PackStart(sideBar, false, false, 3);
