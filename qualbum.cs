@@ -3,6 +3,9 @@ using System;
 
 class SharpApp : Window
 {
+    Label sideBarLabel;
+    String activeFolder;
+
     public SharpApp() : base("Qualbum")
     {
         SetDefaultSize(800, 600);
@@ -49,6 +52,7 @@ class SharpApp : Window
         toolbar.ToolbarStyle = ToolbarStyle.Icons;
 
         ToolButton opentb = new ToolButton(Stock.Open);
+        opentb.Clicked += OnChooseFolderClicked;
         //ToolButton opentb2 = new ToolButton(Stock.Open);
         //SeparatorToolItem sep = new SeparatorToolItem();
         //ToolButton quittb = new ToolButton(Stock.Quit);
@@ -72,7 +76,7 @@ class SharpApp : Window
         mainScreen.PackStart(sideBarSeparator, false, false, 5);
         mainScreen.PackStart(picLabel, true, true, 2);
 
-        Label sideBarLabel = new Label("Side Bar");
+        sideBarLabel = new Label("Side Bar");
         sideBar.PackStart(sideBarLabel, true, true, 3);
 
         app.PackStart(mainScreen, true, true, 3);
@@ -93,14 +97,20 @@ class SharpApp : Window
         Application.Run();
     }
 
-    void OnDelete(object obj, DeleteEventArgs args)
+    void OnChooseFolderClicked(object obj, EventArgs args)
     {
-        Application.Quit();
-    }
+        FileChooserDialog fc = new FileChooserDialog(
+                "Select folder",
+                this,
+                FileChooserAction.SelectFolder,
+                "Cancel" , ResponseType.Cancel,
+                "Select", ResponseType.Accept);
+        if (fc.Run() == (int)ResponseType.Accept)
+        {
+            activeFolder = fc.CurrentFolder;
+        }
 
-    void OnExit(object sender, EventArgs args)
-    {
-        Application.Quit();
+        fc.Destroy();
     }
 
     void OnAbout(object sender, EventArgs args)
@@ -117,4 +127,15 @@ class SharpApp : Window
         dialog.Run();
         dialog.Destroy();
     }
+
+    void OnExit(object sender, EventArgs args)
+    {
+        Application.Quit();
+    }
+
+    void OnDelete(object obj, DeleteEventArgs args)
+    {
+        Application.Quit();
+    }
+}
 }
