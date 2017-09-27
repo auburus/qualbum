@@ -31,4 +31,3 @@ first, make it beatiful, testable and organized later. We'll see if I succeed
 on that.
 
 Thanks for reading!
-- 
