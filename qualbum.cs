@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 class SharpApp : Window
 {
     Label sideBarLabel;
-    String activeFolder;
+    DirectoryInfo activeFolder;
 
     public SharpApp() : base("Qualbum")
     {
@@ -91,11 +91,6 @@ class SharpApp : Window
 
         // Show all
         ShowAll();
-
-        foreach (FileSystemInfo pic in Finder.FindImages(new DirectoryInfo("./")))
-        {
-            System.Console.WriteLine(pic);
-        }
     }
 
     public static void Main()
@@ -115,7 +110,7 @@ class SharpApp : Window
                 "Select", ResponseType.Accept);
         if (fc.Run() == (int)ResponseType.Accept)
         {
-            activeFolder = fc.CurrentFolder;
+            activeFolder = new DirectoryInfo(fc.CurrentFolder);
         }
 
         fc.Destroy();
@@ -144,6 +139,14 @@ class SharpApp : Window
     void OnDelete(object obj, DeleteEventArgs args)
     {
         Application.Quit();
+    }
+
+    Gdk.Pixbuf GetAPicture(DirectoryInfo directory)
+    {
+        FileSystemInfo imageFile = Finder.FindImages(directory).First();
+        // Check if exists?
+
+        return new Gdk.Pixbuf(imageFile.FullName);
     }
 }
 
