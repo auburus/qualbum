@@ -7,8 +7,9 @@ using System.Text.RegularExpressions;
 
 class SharpApp : Window
 {
-    Label sideBarLabel;
-    DirectoryInfo activeFolder;
+    DirectoryInfo activeDirectory;
+    MainScreen mainScreen;
+    Label activeDirectoryLabel;
 
     public SharpApp() : base("Qualbum")
     {
@@ -57,33 +58,26 @@ class SharpApp : Window
 
         ToolButton opentb = new ToolButton(Stock.Open);
         opentb.Clicked += OnChooseFolderClicked;
-        //ToolButton opentb2 = new ToolButton(Stock.Open);
-        //SeparatorToolItem sep = new SeparatorToolItem();
-        //ToolButton quittb = new ToolButton(Stock.Quit);
-        //quittb.Clicked += OnExit;
 
         toolbar.Insert(opentb, 0);
-        //toolbar.Insert(opentb2, 1);
-        //toolbar.Insert(sep, 2);
-        //toolbar.Insert(quittb, 3);
 
         app.PackStart(toolbar, false, false, 0);
 
+        // Add activeDirectory
+        HBox activeDirectoryBox = new HBox(false, 0);
+        activeDirectoryLabel = new Label("No directory currently selected");
+        activeDirectoryLabel.Justify = Gtk.Justification.Left;
+        activeDirectoryBox.PackStart(activeDirectoryLabel, false, false, 15);
+
+        app.PackStart(activeDirectoryBox, false, false, 5);
+
+        HSeparator separator = new HSeparator();
+        app.PackStart(separator, false, false, 0);
+
         // Define mainscreen
-        HBox mainScreen = new HBox(false, 0);
+        mainScreen = new MainScreen();
 
-        Label picLabel = new Label("Picture");
-        VBox sideBar = new VBox(false, 0);
-        VSeparator sideBarSeparator = new VSeparator();
-
-        mainScreen.PackStart(sideBar, false, false, 3);
-        mainScreen.PackStart(sideBarSeparator, false, false, 5);
-        mainScreen.PackStart(picLabel, true, true, 2);
-
-        sideBarLabel = new Label("Side Bar");
-        sideBar.PackStart(sideBarLabel, true, true, 3);
-
-        app.PackStart(mainScreen, true, true, 3);
+        app.PackStart(mainScreen.Box, true, true, 3);
 
         // Add the main box and maximize the app
         Add(app);
@@ -102,6 +96,8 @@ class SharpApp : Window
 
     void OnChooseFolderClicked(object obj, EventArgs args)
     {
+        Gdk.Pixbuf firstPicture;
+
         FileChooserDialog fc = new FileChooserDialog(
                 "Select folder",
                 this,
@@ -110,7 +106,10 @@ class SharpApp : Window
                 "Select", ResponseType.Accept);
         if (fc.Run() == (int)ResponseType.Accept)
         {
-            activeFolder = new DirectoryInfo(fc.CurrentFolder);
+            activeDirectory = new DirectoryInfo(fc.CurrentFolder);
+            activeDirectoryLabel.Text = activeDirectory.FullName;
+            firstPicture = GetFirstImage(activeDirectory);
+            mainScreen.DisplayImage(firstPicture);
         }
 
         fc.Destroy();
@@ -141,13 +140,61 @@ class SharpApp : Window
         Application.Quit();
     }
 
-    Gdk.Pixbuf GetAPicture(DirectoryInfo directory)
+    Gdk.Pixbuf GetFirstImage(DirectoryInfo directory)
     {
-        FileSystemInfo imageFile = Finder.FindImages(directory).First();
-        // Check if exists?
+        IEnumerable<FileSystemInfo> images = Finder.FindImages(directory);
+        if (!images.Any() )
+        {
+            throw new DirectoryWithoutImagesException(
+                "Directory " + directory.FullName + " doesn't contain any images");
+        }
 
-        return new Gdk.Pixbuf(imageFile.FullName);
+        return new Gdk.Pixbuf(images.First().FullName);
     }
+}
+
+class MainScreen
+{
+    public HBox Box;
+    private Label picLabel ;
+    private VBox sideBar;
+    private Image bigImage;
+
+    public MainScreen()
+    {
+        Box = new HBox(false, 0);
+        picLabel = new Label("Picture");
+        sideBar = new VBox(false, 0);
+        VSeparator sideBarSeparator = new VSeparator();
+        bigImage = new Image();
+
+        Box.PackStart(sideBar, false, false, 3);
+        Box.PackStart(sideBarSeparator, false, false, 5);
+        //Box.PackStart(picLabel, true, true, 2);
+        Box.PackStart(bigImage, true, true, 2);
+
+        Label sideBarLabel = new Label("Side Bar");
+        sideBar.PackStart(sideBarLabel, true, true, 3);
+
+    }
+
+    public void DisplayImage(Gdk.Pixbuf pixBuf)
+    {
+        bigImage.Pixbuf = pixBuf;
+        Console.WriteLine("Hola");
+    }
+}
+
+class DirectoryWithoutImagesException : System.Exception
+{
+    public DirectoryWithoutImagesException() : base() {}
+    public DirectoryWithoutImagesException(string message) : base(message) {}
+    public DirectoryWithoutImagesException(string message, System.Exception inner)
+        : base(message, inner) {}
+    protected DirectoryWithoutImagesException(
+        System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context
+    ) {}
 }
 
 class Finder
