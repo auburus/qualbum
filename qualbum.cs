@@ -1,15 +1,11 @@
 using Gtk;
 using System;
 using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 class SharpApp : Window
 {
-    DirectoryInfo activeDirectory;
-    MainScreen mainScreen;
-    Label activeDirectoryLabel;
+    DisplayController DisplayController;
+    Label ActiveDirectoryLabel;
 
     public SharpApp() : base("Qualbum")
     {
@@ -63,11 +59,10 @@ class SharpApp : Window
 
         app.PackStart(toolbar, false, false, 0);
 
-        // Add activeDirectory
+        // Add activeDirectoryLabel
         HBox activeDirectoryBox = new HBox(false, 0);
-        activeDirectoryLabel = new Label("No directory currently selected");
-        activeDirectoryLabel.Justify = Gtk.Justification.Left;
-        activeDirectoryBox.PackStart(activeDirectoryLabel, false, false, 15);
+        ActiveDirectoryLabel = new Label("No directory currently selected");
+        activeDirectoryBox.PackStart(ActiveDirectoryLabel, false, false, 15);
 
         app.PackStart(activeDirectoryBox, false, false, 5);
 
@@ -75,9 +70,9 @@ class SharpApp : Window
         app.PackStart(separator, false, false, 0);
 
         // Define mainscreen
-        mainScreen = new MainScreen();
+        DisplayController = new DisplayController();
 
-        app.PackStart(mainScreen.Box, true, true, 3);
+        app.PackStart(DisplayController.Box, true, true, 3);
 
         // Add the main box and maximize the app
         Add(app);
@@ -96,8 +91,6 @@ class SharpApp : Window
 
     void OnChooseFolderClicked(object obj, EventArgs args)
     {
-        Gdk.Pixbuf firstPicture;
-
         FileChooserDialog fc = new FileChooserDialog(
                 "Select folder",
                 this,
@@ -106,13 +99,16 @@ class SharpApp : Window
                 "Select", ResponseType.Accept);
         if (fc.Run() == (int)ResponseType.Accept)
         {
-            activeDirectory = new DirectoryInfo(fc.CurrentFolder);
-            activeDirectoryLabel.Text = activeDirectory.FullName;
-            firstPicture = GetFirstImage(activeDirectory);
-            mainScreen.DisplayImage(firstPicture);
+            ChangeWorkingDirectory(new DirectoryInfo(fc.CurrentFolder));
         }
 
         fc.Destroy();
+    }
+
+    void ChangeWorkingDirectory(DirectoryInfo newDirectory)
+    {
+        DisplayController.ChangeDirectory(newDirectory);
+        ActiveDirectoryLabel.Text = newDirectory.FullName;
     }
 
     void OnAbout(object sender, EventArgs args)
@@ -139,53 +135,9 @@ class SharpApp : Window
     {
         Application.Quit();
     }
-
-    Gdk.Pixbuf GetFirstImage(DirectoryInfo directory)
-    {
-        IEnumerable<FileSystemInfo> images = Finder.FindImages(directory);
-        if (!images.Any() )
-        {
-            throw new DirectoryWithoutImagesException(
-                "Directory " + directory.FullName + " doesn't contain any images");
-        }
-
-        return new Gdk.Pixbuf(images.First().FullName);
-    }
 }
 
-class MainScreen
-{
-    public HBox Box;
-    private Label picLabel ;
-    private VBox sideBar;
-    private Image bigImage;
-
-    public MainScreen()
-    {
-        Box = new HBox(false, 0);
-        picLabel = new Label("Picture");
-        sideBar = new VBox(false, 0);
-        VSeparator sideBarSeparator = new VSeparator();
-        bigImage = new Image();
-
-        Box.PackStart(sideBar, false, false, 3);
-        Box.PackStart(sideBarSeparator, false, false, 5);
-        //Box.PackStart(picLabel, true, true, 2);
-        Box.PackStart(bigImage, true, true, 2);
-
-        Label sideBarLabel = new Label("Side Bar");
-        sideBar.PackStart(sideBarLabel, true, true, 3);
-
-    }
-
-    public void DisplayImage(Gdk.Pixbuf pixBuf)
-    {
-        bigImage.Pixbuf = pixBuf;
-        Console.WriteLine("Hola");
-    }
-}
-
-class DirectoryWithoutImagesException : System.Exception
+class DirectoryWithoutImagesException : Exception
 {
     public DirectoryWithoutImagesException() : base() {}
     public DirectoryWithoutImagesException(string message) : base(message) {}
@@ -195,27 +147,4 @@ class DirectoryWithoutImagesException : System.Exception
         System.Runtime.Serialization.SerializationInfo info,
         System.Runtime.Serialization.StreamingContext context
     ) {}
-}
-
-class Finder
-{
-    /**
-     * Find all images in the current directory subtree.
-     * It doesn't find images in hidden directories, nor hidden images,
-     * and it does that on purpose.
-     *
-     * The reason why is because if it's hidden, we don't want to "see" it.
-     */
-    public static IEnumerable<FileSystemInfo> FindImages(DirectoryInfo directory)
-    {
-        return directory.EnumerateDirectories("*", SearchOption.AllDirectories)
-            .Where( d => (d.Attributes & FileAttributes.Hidden) == 0)
-            .Select( d => d.EnumerateFiles())
-            .Aggregate(
-                Enumerable.Empty<FileSystemInfo>(),
-                (list, newlist) => list.Concat(newlist)
-            )
-            .Where( f => (f.Attributes & FileAttributes.Hidden) == 0)
-            .Where( f => Regex.IsMatch(f.Extension, @"\.[jpg|jpeg|png|gif]"));
-    }
 }
