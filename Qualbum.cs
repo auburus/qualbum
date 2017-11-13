@@ -1,11 +1,14 @@
 using Gtk;
 using System;
 using System.IO;
+using Gdk;
+using System.Linq;
 
-class SharpApp : Window
+class SharpApp : Gtk.Window
 {
     DisplayController DisplayController;
     Label ActiveDirectoryLabel;
+    Label ImageCounterLabel;
 
     public SharpApp() : base("Qualbum")
     {
@@ -14,37 +17,47 @@ class SharpApp : Window
         SetIconFromFile("icon.png");
 
         DeleteEvent += new DeleteEventHandler(OnDelete);
+        KeyPressEvent += new KeyPressEventHandler(OnKeyPress);
         
+        VBox app = BuildApp();
+
+        Add(app);
+        //Maximize();
+
+        ShowAll();
+    }
+
+    private VBox BuildApp()
+    {
         // All app is a vbox
         VBox app = new VBox(false, 0);
 
         // Add menu
         MenuBar menuBar = new MenuBar();
 
-            // Add file menu
-            MenuItem file = new MenuItem("File");
-            menuBar.Append(file);
+        // Add file menu
+        MenuItem file = new MenuItem("File");
+        menuBar.Append(file);
 
-            Menu fileMenu = new Menu();
-            file.Submenu = fileMenu;
+        Menu fileMenu = new Menu();
+        file.Submenu = fileMenu;
 
-            MenuItem exit = new MenuItem("Exit");
-            exit.Activated += OnExit;
-            fileMenu.Append(exit);
+        MenuItem exit = new MenuItem("Exit");
+        exit.Activated += OnExit;
+        fileMenu.Append(exit);
 
 
-            // Add help menu
-            MenuItem help = new MenuItem("Help");
-            menuBar.Append(help);
+        // Add help menu
+        MenuItem help = new MenuItem("Help");
+        menuBar.Append(help);
 
-            Menu helpMenu = new Menu();
-            help.Submenu = helpMenu;
+        Menu helpMenu = new Menu();
+        help.Submenu = helpMenu;
 
-            MenuItem about = new MenuItem("About");
-            about.Activated += OnAbout;
+        MenuItem about = new MenuItem("About");
+        about.Activated += OnAbout;
 
-            helpMenu.Append(about);
-
+        helpMenu.Append(about);
 
         app.PackStart(menuBar, false, true, 0);
 
@@ -63,6 +76,8 @@ class SharpApp : Window
         HBox activeDirectoryBox = new HBox(false, 0);
         ActiveDirectoryLabel = new Label("No directory currently selected");
         activeDirectoryBox.PackStart(ActiveDirectoryLabel, false, false, 15);
+        ImageCounterLabel = new Label("0 of 0");
+        activeDirectoryBox.PackStart(ImageCounterLabel, false, false, 15);
 
         app.PackStart(activeDirectoryBox, false, false, 5);
 
@@ -74,12 +89,7 @@ class SharpApp : Window
 
         app.PackStart(DisplayController.Box, true, true, 3);
 
-        // Add the main box and maximize the app
-        Add(app);
-        Maximize();
-
-        // Show all
-        ShowAll();
+        return app;
     }
 
     public static void Main()
@@ -97,6 +107,7 @@ class SharpApp : Window
                 FileChooserAction.SelectFolder,
                 "Cancel" , ResponseType.Cancel,
                 "Select", ResponseType.Accept);
+
         if (fc.Run() == (int)ResponseType.Accept)
         {
             ChangeWorkingDirectory(new DirectoryInfo(fc.CurrentFolder));
@@ -109,6 +120,37 @@ class SharpApp : Window
     {
         DisplayController.ChangeDirectory(newDirectory);
         ActiveDirectoryLabel.Text = newDirectory.FullName;
+        ChangeToNextImage(0);
+    }
+
+    void UpdateImageCounterLabel()
+    {
+        if (DisplayController.ImageFiles.Any()) {
+            ImageCounterLabel.Text =
+                (DisplayController.ImageIndex + 1).ToString() +
+                " of " +
+                DisplayController.ImageFiles.Count.ToString();
+        }
+    }
+
+    void ChangeToNextImage(int step)
+    {
+        DisplayController.NextImage(step);
+        UpdateImageCounterLabel();
+    }
+
+    [GLib.ConnectBefore]
+    void OnKeyPress(object sender, Gtk.KeyPressEventArgs args)
+    {
+        switch (args.Event.Key)
+        {
+            case Gdk.Key.Left:
+                ChangeToNextImage(-1);
+                break;
+            case Gdk.Key.Right:
+                ChangeToNextImage(1);
+                break;
+        }
     }
 
     void OnAbout(object sender, EventArgs args)
