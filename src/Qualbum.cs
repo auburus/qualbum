@@ -149,7 +149,6 @@ class SharpApp : Gtk.Window
         FileSystemInfo currentImageFile =
             DisplayController.ImageFiles[DisplayController.ImageIndex];
 
-        Console.WriteLine(currentImageFile.FullName);
         File.SetAttributes(
             currentImageFile.FullName,
             File.GetAttributes(currentImageFile.FullName) | FileAttributes.Hidden
