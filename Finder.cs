@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-class Finder
+static class Finder
 {
     /**
      * Find all images in the current directory subtree.
@@ -15,6 +15,7 @@ class Finder
     public static IEnumerable<FileSystemInfo> FindImages(DirectoryInfo directory)
     {
         return directory.EnumerateDirectories("*", SearchOption.AllDirectories)
+            .Prepend(directory)
             .Where( d => (d.Attributes & FileAttributes.Hidden) == 0)
             .Select( d => d.EnumerateFiles())
             .Aggregate(
