@@ -10,7 +10,6 @@ class DisplayController
     public List<FileSystemInfo> ImageFiles;
     public int ImageIndex; 
 
-    private DirectoryInfo ActiveDirectory;
     private VBox SideBar;
     private Image BigImage;
 
@@ -32,7 +31,6 @@ class DisplayController
 
     public void ChangeDirectory(DirectoryInfo newDirectory)
     {
-        ActiveDirectory = newDirectory;
         ImageFiles = Finder.FindImages(newDirectory).ToList();
         ImageIndex = 0;
     }
