@@ -4,13 +4,13 @@ using System.IO;
 using Gdk;
 using System.Linq;
 
-class SharpApp : Gtk.Window
+class Qualbum : Gtk.Window
 {
     DisplayController DisplayController;
     Label ActiveDirectoryLabel;
     Label ImageCounterLabel;
 
-    public SharpApp() : base("Qualbum")
+    public Qualbum() : base("Qualbum")
     {
         SetDefaultSize(800, 600);
         SetPosition(WindowPosition.Center);
@@ -32,34 +32,8 @@ class SharpApp : Gtk.Window
         // All app is a vbox
         VBox app = new VBox(false, 0);
 
-        // Add menu
-        MenuBar menuBar = new MenuBar();
-
-        // Add file menu
-        MenuItem file = new MenuItem("File");
-        menuBar.Append(file);
-
-        Menu fileMenu = new Menu();
-        file.Submenu = fileMenu;
-
-        MenuItem exit = new MenuItem("Exit");
-        exit.Activated += OnExit;
-        fileMenu.Append(exit);
-
-
-        // Add help menu
-        MenuItem help = new MenuItem("Help");
-        menuBar.Append(help);
-
-        Menu helpMenu = new Menu();
-        help.Submenu = helpMenu;
-
-        MenuItem about = new MenuItem("About");
-        about.Activated += OnAbout;
-
-        helpMenu.Append(about);
-
-        app.PackStart(menuBar, false, true, 0);
+        MenuView menu = new MenuView();
+        app.PackStart(menu.Widget, false, true, 0);
 
         // Add toolbar
         Toolbar toolbar = new Toolbar();
@@ -92,10 +66,10 @@ class SharpApp : Gtk.Window
         return app;
     }
 
-    public static void Main()
+    public static void Initialize()
     {
         Application.Init();
-        new SharpApp();
+        new Qualbum();
         Application.Run();
     }
 
@@ -188,21 +162,6 @@ class SharpApp : Gtk.Window
                     break;
             }
         }
-    }
-
-    void OnAbout(object sender, EventArgs args)
-    {
-        AboutDialog dialog = new AboutDialog();
-
-        dialog.ProgramName = "Qualbum";
-        dialog.Version = "0.0.1";
-        dialog.Comments = @"Thanks for using this program. Forward any comments
-            or suggestions to the following website:";
-        dialog.Authors = new string [] {"Jordi Nonell"};
-        dialog.Website = "https://jnonell.com";
-
-        dialog.Run();
-        dialog.Destroy();
     }
 
     void OnExit(object sender, EventArgs args)
