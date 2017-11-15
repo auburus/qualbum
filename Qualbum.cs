@@ -101,6 +101,11 @@ class SharpApp : Gtk.Window
 
     void OnChooseFolderClicked(object obj, EventArgs args)
     {
+        ShowChooseFolderDialog();
+    }
+
+    void ShowChooseFolderDialog()
+    {
         FileChooserDialog fc = new FileChooserDialog(
                 "Select folder",
                 this,
@@ -142,14 +147,31 @@ class SharpApp : Gtk.Window
     [GLib.ConnectBefore]
     void OnKeyPress(object sender, Gtk.KeyPressEventArgs args)
     {
-        switch (args.Event.Key)
+        if ((args.Event.State & Gdk.ModifierType.ControlMask) ==
+            Gdk.ModifierType.ControlMask)
         {
-            case Gdk.Key.Left:
-                ChangeToNextImage(-1);
-                break;
-            case Gdk.Key.Right:
-                ChangeToNextImage(1);
-                break;
+            switch (args.Event.Key)
+            {
+                case Gdk.Key.o:
+                    ShowChooseFolderDialog();
+                    break;
+            }
+        }
+        else if ((args.Event.State & Gdk.ModifierType.None) ==
+            Gdk.ModifierType.None)
+        {
+            switch (args.Event.Key)
+            {
+                case Gdk.Key.Left:
+                    ChangeToNextImage(-1);
+                    break;
+                case Gdk.Key.Right:
+                    ChangeToNextImage(1);
+                    break;
+                case Gdk.Key.Delete:
+                    DeleteCurrentImage();
+                    break;
+            }
         }
     }
 
