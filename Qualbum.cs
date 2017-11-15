@@ -144,6 +144,22 @@ class SharpApp : Gtk.Window
         UpdateImageCounterLabel();
     }
 
+    public void DeleteCurrentImage()
+    {
+        FileSystemInfo currentImageFile =
+            DisplayController.ImageFiles[DisplayController.ImageIndex];
+
+        Console.WriteLine(currentImageFile.FullName);
+        File.SetAttributes(
+            currentImageFile.FullName,
+            File.GetAttributes(currentImageFile.FullName) | FileAttributes.Hidden
+        );
+
+        DisplayController.ImageFiles.RemoveAt(DisplayController.ImageIndex);
+        ChangeToNextImage(0);
+    }
+
+
     [GLib.ConnectBefore]
     void OnKeyPress(object sender, Gtk.KeyPressEventArgs args)
     {
