@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "Autofac": "4.6.2"
+    },
+    "frameworks": {
+        "net45": {}
+    }
+}
