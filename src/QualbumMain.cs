@@ -3,14 +3,15 @@ using System;
 using System.IO;
 using Gdk;
 using System.Linq;
+using Autofac;
 
-class Qualbum : Gtk.Window
+class QualbumMain : Gtk.Window
 {
     DisplayController DisplayController;
     Label ActiveDirectoryLabel;
     Label ImageCounterLabel;
 
-    public Qualbum() : base("Qualbum")
+    public QualbumMain() : base("Qualbum")
     {
         SetDefaultSize(800, 600);
         SetPosition(WindowPosition.Center);
@@ -27,6 +28,13 @@ class Qualbum : Gtk.Window
         ShowAll();
     }
 
+    public static void Main()
+    {
+        Application.Init();
+        new QualbumMain();
+        Application.Run();
+    }
+
     private VBox BuildApp()
     {
         // All app is a vbox
@@ -35,16 +43,9 @@ class Qualbum : Gtk.Window
         MenuView menu = new MenuView();
         app.PackStart(menu.Widget, false, true, 0);
 
-        // Add toolbar
-        Toolbar toolbar = new Toolbar();
-        toolbar.ToolbarStyle = ToolbarStyle.Icons;
+        ToolbarView toolbar = new ToolbarView();
+        app.PackStart(toolbar.Widget, false, false, 0);
 
-        ToolButton opentb = new ToolButton(Stock.Open);
-        opentb.Clicked += OnChooseFolderClicked;
-
-        toolbar.Insert(opentb, 0);
-
-        app.PackStart(toolbar, false, false, 0);
 
         // Add activeDirectoryLabel
         HBox activeDirectoryBox = new HBox(false, 0);
@@ -64,18 +65,6 @@ class Qualbum : Gtk.Window
         app.PackStart(DisplayController.Box, true, true, 3);
 
         return app;
-    }
-
-    public static void Initialize()
-    {
-        Application.Init();
-        new Qualbum();
-        Application.Run();
-    }
-
-    void OnChooseFolderClicked(object obj, EventArgs args)
-    {
-        ShowChooseFolderDialog();
     }
 
     void ShowChooseFolderDialog()
