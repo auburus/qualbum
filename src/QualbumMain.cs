@@ -25,6 +25,11 @@ class QualbumMain : Gtk.Window
         Add(app);
         //Maximize();
 
+        WorkingFolderModel working = new WorkingFolderModel();
+        working.Path = "hola";
+        
+        Console.WriteLine(working.Path);
+
         ShowAll();
     }
 

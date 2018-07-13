@@ -11,19 +11,28 @@ class DisplayController
     public int ImageIndex; 
 
     private VBox SideBar;
-    private Image BigImage;
+    //private Image BigImage;
+    private Bin imageBin;
+
+    private PhotoPresenter photoPresenter;
 
     public DisplayController()
     {
         Box = new HBox(false, 0);
         SideBar = new VBox(false, 0);
         VSeparator sideBarSeparator = new VSeparator();
-        BigImage = new Image();
+
+        imageBin = new Frame();
+        //BigImage = new Image();
         ImageFiles = new List<FileSystemInfo>();
+
+        photoPresenter = new PhotoPresenter(new WorkingFolderModel());
+        photoPresenter.InsertView(imageBin);
 
         Box.PackStart(SideBar, false, false, 3);
         Box.PackStart(sideBarSeparator, false, false, 5);
-        Box.PackStart(BigImage, true, true, 2);
+        Box.PackStart(imageBin, true, true, 2);
+        //Box.PackStart(BigImage, true, true, 2);
 
         Label sideBarLabel = new Label("Side Bar");
         SideBar.PackStart(sideBarLabel, true, true, 3);
@@ -39,7 +48,8 @@ class DisplayController
     {
         if (ImageFiles.Any()) {
             ImageIndex = (ImageIndex + ImageFiles.Count + step) % ImageFiles.Count;
-            ShowCurrentImage();
+            photoPresenter.Display(ImageFiles[ImageIndex].FullName);
+            //ShowCurrentImage();
         }
     }
 
@@ -48,7 +58,7 @@ class DisplayController
         Gdk.Pixbuf currentImage = GetCurrentImage();
         DisplayImage(currentImage);
     }
-    
+ 
     private Gdk.Pixbuf GetCurrentImage()
     {
         //if (ImageFiles.count <= index) {
@@ -58,18 +68,6 @@ class DisplayController
 
     private void DisplayImage(Gdk.Pixbuf pixBuf)
     {
-        double ratio = Math.Min(
-            BigImage.Allocation.Width / Convert.ToDouble(pixBuf.Width),
-            BigImage.Allocation.Height / Convert.ToDouble(pixBuf.Height)
-        );
-        
-        if (ratio < 1)
-        {
-            pixBuf = pixBuf.ScaleSimple(
-                Convert.ToInt32(Math.Round(pixBuf.Width * ratio)),
-                Convert.ToInt32(Math.Round(pixBuf.Height * ratio)),
-                Gdk.InterpType.Bilinear);
-        }
-        BigImage.Pixbuf = pixBuf;
+        // Mogut a photoview
     }
 }
