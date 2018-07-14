@@ -7,15 +7,21 @@ using Autofac;
 
 class QualbumMain : Gtk.Window
 {
-    DisplayController DisplayController;
     Label ActiveDirectoryLabel;
     Label ImageCounterLabel;
+    private WorkingDirModel workingDir;
+    private PhotoPresenter photoPresenter;
 
     public QualbumMain() : base("Qualbum")
     {
         SetDefaultSize(800, 600);
         SetPosition(WindowPosition.Center);
         SetIconFromFile("icon.png");
+
+        workingDir = new WorkingDirModel();
+        workingDir.DirectoryChangedEvent += changeWorkingDirectoryHandler;
+
+        photoPresenter = new PhotoPresenter(workingDir);
 
         DeleteEvent += new DeleteEventHandler(OnDelete);
         KeyPressEvent += new KeyPressEventHandler(OnKeyPress);
@@ -24,11 +30,6 @@ class QualbumMain : Gtk.Window
 
         Add(app);
         //Maximize();
-
-        WorkingFolderModel working = new WorkingFolderModel();
-        working.Path = "hola";
-        
-        Console.WriteLine(working.Path);
 
         ShowAll();
     }
@@ -65,9 +66,11 @@ class QualbumMain : Gtk.Window
         app.PackStart(separator, false, false, 0);
 
         // Define mainscreen
-        DisplayController = new DisplayController();
 
-        app.PackStart(DisplayController.Box, true, true, 3);
+        Container mainScreen = new HBox();
+        app.PackStart(mainScreen, true, true, 3);
+
+        photoPresenter.AttachWidget(mainScreen);
 
         return app;
     }
@@ -83,19 +86,20 @@ class QualbumMain : Gtk.Window
 
         if (fc.Run() == (int)ResponseType.Accept)
         {
-            ChangeWorkingDirectory(new DirectoryInfo(fc.CurrentFolder));
+            workingDir.ChangeDirectory(new DirectoryInfo(fc.CurrentFolder));
         }
 
         fc.Destroy();
     }
 
-    void ChangeWorkingDirectory(DirectoryInfo newDirectory)
+    public void changeWorkingDirectoryHandler(object sender, DirectoryChangedEventArgs eventArgs)
     {
-        DisplayController.ChangeDirectory(newDirectory);
-        ActiveDirectoryLabel.Text = newDirectory.FullName;
-        ChangeToNextImage(0);
+        Console.WriteLine("Changing directory, muhaha");
+        ActiveDirectoryLabel.Text = eventArgs.NewDirectory.FullName;
+        photoPresenter.FirstPhoto();
     }
 
+    /*
     void UpdateImageCounterLabel()
     {
         if (DisplayController.ImageFiles.Any()) {
@@ -105,13 +109,15 @@ class QualbumMain : Gtk.Window
                 DisplayController.ImageFiles.Count.ToString();
         }
     }
+    */
 
-    void ChangeToNextImage(int step)
+    /*void ChangeToNextImage(int step)
     {
         DisplayController.NextImage(step);
         UpdateImageCounterLabel();
-    }
+    }*/
 
+    /*
     public void DeleteCurrentImage()
     {
         FileSystemInfo currentImageFile =
@@ -123,8 +129,9 @@ class QualbumMain : Gtk.Window
         );
 
         DisplayController.ImageFiles.RemoveAt(DisplayController.ImageIndex);
-        ChangeToNextImage(0);
+        //ChangeToNextImage(0);
     }
+    */
 
 
     [GLib.ConnectBefore]
@@ -146,13 +153,13 @@ class QualbumMain : Gtk.Window
             switch (args.Event.Key)
             {
                 case Gdk.Key.Left:
-                    ChangeToNextImage(-1);
+                    photoPresenter.PrevPhoto();
                     break;
                 case Gdk.Key.Right:
-                    ChangeToNextImage(1);
+                    photoPresenter.NextPhoto();
                     break;
                 case Gdk.Key.Delete:
-                    DeleteCurrentImage();
+                    //DeleteCurrentImage();
                     break;
             }
         }

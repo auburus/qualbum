@@ -3,23 +3,31 @@ using Gtk;
 
 class PhotoPresenter
 {
-    private WorkingFolderModel _model;
+    private WorkingDirModel _model;
     private PhotoView _view;
 
-    public PhotoPresenter(WorkingFolderModel model)
+    public PhotoPresenter(WorkingDirModel model)
     {
         _model = model;
         _view = new PhotoView(this);
     }
 
+    public void FirstPhoto()
+    {
+        this._model.GoFirstPhoto();
+        this._view.Display(this._model.CurrentPhoto);
+    }
+
     public void NextPhoto()
     {
-        throw new NotImplementedException();
+        this._model.IncrementPhoto(1);
+        this._view.Display(this._model.CurrentPhoto);
     }
     
     public void PrevPhoto()
     {
-        throw new NotImplementedException();
+        this._model.IncrementPhoto(-1);
+        this._view.Display(this._model.CurrentPhoto);
     }
 
     // Proxy function until we finish refactoring
@@ -28,7 +36,7 @@ class PhotoPresenter
         this._view.Display(path);
     }
 
-    public void InsertView(Container container)
+    public void AttachWidget(Container container)
     {
         container.Add(this._view.AsWidget);
     }
