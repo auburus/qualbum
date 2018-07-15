@@ -7,6 +7,7 @@ class WorkingDirModel
 {
     
     private DirectoryInfo dir;
+    private DirectoryInfo deletedDir;
     private int photoIndex;
     private List<FileSystemInfo> photos;
 
@@ -19,6 +20,8 @@ class WorkingDirModel
         dir = newDir;
         photos = Finder.FindImages(newDir).ToList();
         this.GoFirstPhoto();
+
+        createDeletedFolder();
 
         if (DirectoryChangedEvent != null) {
             DirectoryChangedEventArgs args = new DirectoryChangedEventArgs();
@@ -37,11 +40,34 @@ class WorkingDirModel
         photoIndex = (photoIndex + photos.Count + i) % photos.Count;
     }
 
-    public string CurrentPhoto {
+    public FileSystemInfo CurrentPhoto {
         get {
             // TODO check it exists
-            return photos[photoIndex].FullName;
+            return photos[photoIndex];
         }
+    }
+
+    public void DeleteCurrentPhoto() {
+        Console.WriteLine("Deleting photo " + photoIndex);
+
+        FileInfo current = new FileInfo(CurrentPhoto.FullName);
+        current.MoveTo(Path.Combine(deletedDir.FullName, CurrentPhoto.Name));
+
+        photos.RemoveAt(photoIndex);
+        IncrementPhoto(0);
+    }
+
+    private void createDeletedFolder() {
+        DirectoryInfo[] dirs = dir.GetDirectories(".deleted");
+
+        // Check if directory exists
+        if (dirs.Length == 1) {
+            deletedDir = dirs[0];
+        } else {
+            deletedDir = this.dir.CreateSubdirectory(".deleted");
+        }
+
+        deletedDir.Attributes = deletedDir.Attributes | FileAttributes.Hidden;
     }
 }
 

@@ -159,7 +159,7 @@ class QualbumMain : Gtk.Window
                     photoPresenter.NextPhoto();
                     break;
                 case Gdk.Key.Delete:
-                    //DeleteCurrentImage();
+                    photoPresenter.DeletePhoto();
                     break;
             }
         }

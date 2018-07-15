@@ -3,16 +3,13 @@ using Gtk;
 
 class PhotoView
 {
-    private PhotoPresenter _presenter;
-
     private HBox box;
     private VBox sideBar;
     private Bin imageBin;
     private Image photo;
 
-    public PhotoView(PhotoPresenter presenter)
+    public PhotoView()
     {
-        _presenter = presenter;
         Initialize();
     }
 
