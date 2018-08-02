@@ -29,7 +29,7 @@ class QualbumMain : Gtk.Window
         VBox app = BuildApp();
 
         Add(app);
-        //Maximize();
+        Maximize();
 
         ShowAll();
     }
@@ -94,7 +94,6 @@ class QualbumMain : Gtk.Window
 
     public void changeWorkingDirectoryHandler(object sender, DirectoryChangedEventArgs eventArgs)
     {
-        Console.WriteLine("Changing directory, muhaha");
         ActiveDirectoryLabel.Text = eventArgs.NewDirectory.FullName;
         photoPresenter.FirstPhoto();
     }
@@ -110,29 +109,6 @@ class QualbumMain : Gtk.Window
         }
     }
     */
-
-    /*void ChangeToNextImage(int step)
-    {
-        DisplayController.NextImage(step);
-        UpdateImageCounterLabel();
-    }*/
-
-    /*
-    public void DeleteCurrentImage()
-    {
-        FileSystemInfo currentImageFile =
-            DisplayController.ImageFiles[DisplayController.ImageIndex];
-
-        File.SetAttributes(
-            currentImageFile.FullName,
-            File.GetAttributes(currentImageFile.FullName) | FileAttributes.Hidden
-        );
-
-        DisplayController.ImageFiles.RemoveAt(DisplayController.ImageIndex);
-        //ChangeToNextImage(0);
-    }
-    */
-
 
     [GLib.ConnectBefore]
     void OnKeyPress(object sender, Gtk.KeyPressEventArgs args)

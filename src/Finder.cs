@@ -23,6 +23,10 @@ static class Finder
                 (list, newlist) => list.Concat(newlist)
             )
             .Where( f => (f.Attributes & FileAttributes.Hidden) == 0)
-            .Where( f => Regex.IsMatch(f.Extension, @"\.[jpg|jpeg|png|gif]"));
+            .Where( f => Regex.IsMatch(
+                        f.Extension,
+                        @"\.[jpg|jpeg|png|gif]",
+                        RegexOptions.IgnoreCase
+            ));
     }
 }

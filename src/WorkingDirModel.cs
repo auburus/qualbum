@@ -40,18 +40,18 @@ class WorkingDirModel
         photoIndex = (photoIndex + photos.Count + i) % photos.Count;
     }
 
-    public FileSystemInfo CurrentPhoto {
+    public String CurrentPhotoPath {
         get {
-            // TODO check it exists
-            return photos[photoIndex];
+            if (photoIndex < 0 || photoIndex >= photos.Count) {
+                return null;
+            }
+            return photos[photoIndex].FullName;
         }
     }
 
     public void DeleteCurrentPhoto() {
-        Console.WriteLine("Deleting photo " + photoIndex);
-
-        FileInfo current = new FileInfo(CurrentPhoto.FullName);
-        current.MoveTo(Path.Combine(deletedDir.FullName, CurrentPhoto.Name));
+        FileInfo current = new FileInfo(this.CurrentPhotoPath);
+        current.MoveTo(Path.Combine(deletedDir.FullName, current.Name));
 
         photos.RemoveAt(photoIndex);
         IncrementPhoto(0);
