@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 class WorkingDirModel
 {
@@ -71,60 +73,66 @@ class WorkingDirModel
         deletedDir.Attributes = deletedDir.Attributes | FileAttributes.Hidden;
     }
 
-    public Dictionary<Color, float> GetHistogramFromCurrent()
+    public List<Color> GetHashFromCurrent()
     {
-        return this.GetHistogram(this.CurrentPhotoPath);
+        return this.GetHash(this.CurrentPhotoPath);
     }
 
-    public Dictionary<Color, float> GetHistogram(string path) {
-        Bitmap currentImage = new Bitmap(path, false);
-        Dictionary<Color, float> histogram = new Dictionary<Color, float>();
+    /**
+      * It firsts resizes the image for performance
+      */
+    public List<Color> GetHash(string path) {
+        Image image = Image.FromFile(path);
+        Bitmap currentImage = ResizeImage(image, 6, 6);
+
+        List<Color> hash = new List<Color>();
 
         for (int x = 0; x < currentImage.Width; x++) {
             for (int y = 0; y < currentImage.Height; y++) {
-                Color color = currentImage.GetPixel(x, y);
-
-                float count = 0;
-                if (histogram.TryGetValue(color, out count)) {
-                    histogram[color] = count + 1;
-                } else {
-                    histogram[color] = 1;
-                }
+                hash.Add(currentImage.GetPixel(x, y));
             }
         }
 
-        Dictionary<Color, float> hist = new Dictionary<Color, float>();
-        //float max = histogram.Values.Max();
-        float max = currentImage.Width * currentImage.Height;
-
-        foreach (Color key in histogram.Keys)
-        {
-            hist[key] = histogram[key] / max;
-        }
-
-
-        return hist;
+        return hash;
     }
 
-    public float HistogramDifference(Dictionary<Color, float> histogram1, Dictionary<Color, float> histogram2)
+    public static Bitmap ResizeImage(Image image, int width, int height)
     {
-        Dictionary<Color, float> hist1 = new Dictionary<Color, float>(histogram1);
-        Dictionary<Color, float> hist2 = new Dictionary<Color, float>(histogram2);
+        var destRect = new Rectangle(0, 0, width, height);
+        var destImage = new Bitmap(width, height);
 
-        float diff = 0;
-        float count2;
+        //destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-        foreach (Color key in hist1.Keys) {
-            if (hist2.TryGetValue(key, out count2)) {
-                diff += Math.Abs(hist1[key] - count2);
-                hist2[key] = 0;
-            } else {
-                diff += hist1[key];
+        using (var graphics = Graphics.FromImage(destImage))
+        {
+            graphics.CompositingMode = CompositingMode.SourceCopy;
+            graphics.CompositingQuality = CompositingQuality.HighQuality;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+            using (var wrapMode = new ImageAttributes())
+            {
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                graphics.DrawImage(image, destRect, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, wrapMode);
             }
         }
 
-        foreach (Color key in hist2.Keys) {
-            diff += hist2[key]; // We zeroed all the previously added ones
+        return destImage;
+    }
+
+    /**
+      * Both list MUST have the same length
+      */
+    public int HashDifference(List<Color> hash1, List<Color> hash2)
+    {
+        int diff = 0;
+
+        for (int i = 0; i < Math.Min(hash1.Count, hash2.Count); i++)
+        {
+            diff += Math.Abs(hash1[i].R - hash2[i].R);
+            diff += Math.Abs(hash1[i].G - hash2[i].G);
+            diff += Math.Abs(hash1[i].B - hash2[i].B);
         }
 
         return diff;

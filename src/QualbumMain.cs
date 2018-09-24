@@ -124,15 +124,19 @@ class QualbumMain : Gtk.Window
                     break;
 
                 case Gdk.Key.h:
-                    Dictionary<System.Drawing.Color, float> hist1 = 
-                        workingDir.GetHistogramFromCurrent();
+                    List<System.Drawing.Color> hash1 = 
+                        workingDir.GetHashFromCurrent();
+
                     photoPresenter.NextPhoto();
 
-                    Dictionary<System.Drawing.Color, float> hist2 = 
-                        workingDir.GetHistogramFromCurrent();
+                    Console.WriteLine("\n\n----------------\n");
+
+                    List<System.Drawing.Color> hash2 = 
+                        workingDir.GetHashFromCurrent();
+                    Console.WriteLine("");
 
                     Console.WriteLine(
-                        workingDir.HistogramDifference(hist1, hist2)
+                        workingDir.HashDifference(hash1, hash2)
                     );
                     break;
             }
