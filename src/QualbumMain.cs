@@ -3,7 +3,8 @@ using System;
 using System.IO;
 using Gdk;
 using System.Linq;
-using Autofac;
+using System.Collections.Generic; // Remove when remove dict
+//using Autofac;
 
 class QualbumMain : Gtk.Window
 {
@@ -120,6 +121,19 @@ class QualbumMain : Gtk.Window
             {
                 case Gdk.Key.o:
                     ShowChooseFolderDialog();
+                    break;
+
+                case Gdk.Key.h:
+                    Dictionary<System.Drawing.Color, float> hist1 = 
+                        workingDir.GetHistogramFromCurrent();
+                    photoPresenter.NextPhoto();
+
+                    Dictionary<System.Drawing.Color, float> hist2 = 
+                        workingDir.GetHistogramFromCurrent();
+
+                    Console.WriteLine(
+                        workingDir.HistogramDifference(hist1, hist2)
+                    );
                     break;
             }
         }
