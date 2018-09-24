@@ -17,6 +17,13 @@ class PhotoView
 
     public void Display(string path)
     {
+        // Force the GC to run to claim the memory that the different
+        // new pixbuf keep using, that for some reason doesn't get
+        // reclaimed automatically.
+        // Reference: https://github.com/gtkd-developers/GtkD/issues/127
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
         Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(path);
         Display(pixbuf);
     }
