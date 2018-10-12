@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using System.IO;
 
 class PhotoView
 {
@@ -7,9 +8,12 @@ class PhotoView
     private Label imageCounterLabel;
 
     private VBox mainBox;
-    private VBox sideBar;
     private Bin imageBin;
     private Image photo;
+
+    private Label pathLabel;
+    private Label sizeLabel;
+    private Label dimLabel;
 
     public PhotoView()
     {
@@ -18,7 +22,7 @@ class PhotoView
 
     public Widget AsWidget { get { return mainBox; } }
 
-    public void Display(string path)
+    public void Display(FileInfo photoFile)
     {
         // Force the GC to run to claim the memory that the different
         // new pixbuf keep using, that for some reason doesn't get
@@ -27,8 +31,10 @@ class PhotoView
         GC.Collect();
         GC.WaitForPendingFinalizers();
 
-        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(path);
+        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(photoFile.FullName);
         Display(pixbuf);
+
+        fillLabels(photoFile);
     }
 
     public void UpdateCounterLabel(int currentPhoto, int totalPhotos)
@@ -54,6 +60,26 @@ class PhotoView
         photo.Pixbuf = pixbuf;
     }
 
+    private void fillLabels(FileInfo photoFile)
+    {
+        pathLabel.Text = photoFile.FullName;
+
+        float size = photoFile.Length;
+        String unit = "Bytes";
+
+        if (size / 1024 > 1) {
+            size = size / 1024;
+            unit = "Kb";
+        }
+        if (size / 1024 > 1) {
+            size = size / 1024;
+            unit = "Mb";
+        }
+
+        sizeLabel.Text = size.ToString("0.0") + " " + unit;
+
+    }
+
     private void Initialize()
     {
         mainBox = new VBox(false, 0);
@@ -66,25 +92,43 @@ class PhotoView
 
         mainBox.PackStart(activeDirectoryBox, false, false, 0);
 
-        HSeparator separator = new HSeparator();
-        mainBox.PackStart(separator, false, false, 0);
+
+        // HSeparator separator = new HSeparator();
+        // mainBox.PackStart(separator, false, false, 0);
 
 
-        HBox box = new HBox(false, 0);
-        sideBar = new VBox(false, 0);
-        VSeparator sideBarSeparator = new VSeparator();
+        VBox box = new VBox(false, 0);
 
         imageBin = new Frame();
-
-        box.PackStart(sideBar, false, false, 3);
-        box.PackStart(sideBarSeparator, false, false, 5);
-        box.PackStart(imageBin, true, true, 2);
-
-        Label sideBarLabel = new Label("Side Bar");
-        sideBar.PackStart(sideBarLabel, true, true, 3);
-
         photo = new Image();
         imageBin.Add(photo);
+
+        box.PackStart(imageBin, true, true, 2);
+
+
+        Table t = new Table(2, 3, false);
+
+        t.Attach(new Label("Path: "), 0, 1, 0, 1,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+        pathLabel = new Label("pathlabel");
+        t.Attach(pathLabel, 1, 2, 0, 1,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+
+        t.Attach(new Label("Size: "), 0, 1, 1, 2,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+        sizeLabel = new Label("sizeLabel");
+        t.Attach(sizeLabel, 1, 2, 1, 2,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+
+        // t.Attach(new Label("Dimensions: "), 0, 1, 2, 3,
+        //         Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+        // dimLabel = new Label("dimLabel");
+        // t.Attach(dimLabel, 1, 2, 2, 3,
+        //         Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+
+        t.ShowAll();
+
+        box.PackStart(t, false, false, 3);
 
         mainBox.PackStart(box, true, true, 3);
     }

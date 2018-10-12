@@ -16,49 +16,51 @@ class PhotoPresenter
     public void FirstPhoto()
     {
         this.model.GoFirstPhoto();
-        Display(this.model.CurrentPhotoPath);
+        Display(this.model.CurrentPhoto);
     }
 
     public void NextPhoto()
     {
         this.model.IncrementPhoto(1);
-        Display(this.model.CurrentPhotoPath);
+        Display(this.model.CurrentPhoto);
     }
 
     public void PrevPhoto()
     {
         this.model.IncrementPhoto(-1);
-        Display(this.model.CurrentPhotoPath);
+        Display(this.model.CurrentPhoto);
     }
 
     public void DeletePhoto()
     {
         this.model.DeleteCurrentPhoto();
-        Display(this.model.CurrentPhotoPath);
+        Display(this.model.CurrentPhoto);
     }
 
     // Proxy function until we finish refactoring
-    public void Display(string path)
+    public void Display(FileInfo photoFile)
     {
-        if (path == null) {
-            this.view.Display(this.defaultPhotoPath);
+        if (photoFile == null) {
+            this.view.Display(this.defaultPhoto);
             return;
         } 
 
-        this.view.Display(path);
+        this.view.Display(photoFile);
         this.view.UpdateCounterLabel(model.CurrentPhotoIndex,
                 model.TotalNumberPhotos);
     }
 
     public Widget Widget { get { return this.view.AsWidget; } }
 
-    private String defaultPhotoPath {
+    private FileInfo defaultPhoto {
         get {
-            return Path.Combine(
-                new FileInfo(
-                    System.Reflection.Assembly.GetExecutingAssembly().Location
-                ).Directory.FullName,
-                "config" + Path.DirectorySeparatorChar + "default.jpg"
+            return new FileInfo(
+                Path.Combine(
+                    new FileInfo(
+                        System.Reflection.Assembly.GetExecutingAssembly().Location
+                    ).Directory.FullName,
+                    "config" + Path.DirectorySeparatorChar + "default.jpg"
+                )
             );
         }
     }

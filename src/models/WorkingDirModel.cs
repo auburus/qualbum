@@ -12,7 +12,7 @@ public class WorkingDirModel
     private DirectoryInfo dir;
     private DirectoryInfo deletedDir;
     private int photoIndex;
-    private List<FileSystemInfo> photos;
+    private List<FileInfo> photos;
 
     public DirectoryInfo Directory { get { return dir; } }
 
@@ -47,18 +47,18 @@ public class WorkingDirModel
         photoIndex = (photoIndex + photos.Count + i) % photos.Count;
     }
 
-    public String CurrentPhotoPath {
+    public FileInfo CurrentPhoto {
         get {
             if (photoIndex < 0 || photoIndex >= photos.Count) {
                 return null;
             }
-            return photos[photoIndex].FullName;
+            return photos[photoIndex];
         }
     }
 
     public void DeleteCurrentPhoto() {
-        FileInfo current = new FileInfo(this.CurrentPhotoPath);
-        current.MoveTo(Path.Combine(deletedDir.FullName, current.Name));
+        this.CurrentPhoto.MoveTo(
+                Path.Combine(deletedDir.FullName, this.CurrentPhoto.Name));
 
         photos.RemoveAt(photoIndex);
         IncrementPhoto(0);
@@ -79,7 +79,7 @@ public class WorkingDirModel
 
     public List<Color> GetHashFromCurrent()
     {
-        return this.GetHash(this.CurrentPhotoPath);
+        return this.GetHash(this.CurrentPhoto.FullName);
     }
 
     /**

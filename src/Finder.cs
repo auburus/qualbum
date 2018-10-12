@@ -12,14 +12,14 @@ static class Finder
      *
      * The reason why is because if it's hidden, we don't want to "see" it.
      */
-    public static IEnumerable<FileSystemInfo> FindImages(DirectoryInfo directory)
+    public static IEnumerable<FileInfo> FindImages(DirectoryInfo directory)
     {
         return directory.EnumerateDirectories("*", SearchOption.AllDirectories)
             .Prepend(directory)
             .Where( d => (d.Attributes & FileAttributes.Hidden) == 0)
             .Select( d => d.EnumerateFiles())
             .Aggregate(
-                Enumerable.Empty<FileSystemInfo>(),
+                Enumerable.Empty<FileInfo>(),
                 (list, newlist) => list.Concat(newlist)
             )
             .Where( f => (f.Attributes & FileAttributes.Hidden) == 0)
