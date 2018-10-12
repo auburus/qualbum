@@ -2,12 +2,14 @@ using Gtk;
 
 public class MenuPresenter
 {
-    private MenuView View;
+    private MenuView view;
 
-    public MenuPresenter(MenuView view)
+    public MenuPresenter()
     {
-        this.View = view;
+        this.view = new MenuView(this);
     }
+
+    public Widget Widget { get { return this.view.AsWidget; } }
 
     public void Exit()
     {

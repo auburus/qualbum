@@ -3,14 +3,14 @@ using System;
 
 public class ToolbarView
 {
-    private ToolbarPresenter Presenter;
+    private ToolbarPresenter presenter;
 
-    public ToolbarView()
+    public ToolbarView(ToolbarPresenter presenter)
     {
-        this.Presenter = new ToolbarPresenter(this);
+        this.presenter = presenter;
     }
 
-    public Toolbar Widget
+    public Toolbar AsWidget
     {
         get
         {
@@ -28,7 +28,7 @@ public class ToolbarView
 
     private void OnChooseFolderClicked(object obj, EventArgs args)
     {
-        Presenter.ChooseFolderClicked();
+        presenter.ChooseFolderClicked();
         //ShowChooseFolderDialog();
     }
 }

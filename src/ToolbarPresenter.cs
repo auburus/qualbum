@@ -2,12 +2,14 @@ using Gtk;
 
 public class ToolbarPresenter
 {
-    private ToolbarView View;
+    private ToolbarView view;
 
-    public ToolbarPresenter(ToolbarView view)
+    public ToolbarPresenter()
     {
-        this.View = view;
+        this.view = new ToolbarView(this);
     }
+
+    public Widget Widget { get { return this.view.AsWidget; } }
 
     public void ChooseFolderClicked()
     {

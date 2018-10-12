@@ -4,7 +4,6 @@ using System.IO;
 using Gdk;
 using System.Linq;
 using System.Collections.Generic; // Remove when remove dict
-//using Autofac;
 
 class QualbumMain : Gtk.Window
 {
@@ -12,6 +11,8 @@ class QualbumMain : Gtk.Window
     Label ImageCounterLabel;
     private WorkingDirModel workingDir;
     private PhotoPresenter photoPresenter;
+    private MenuPresenter menuPresenter;
+    private ToolbarPresenter toolbarPresenter;
 
     public QualbumMain() : base("Qualbum")
     {
@@ -23,6 +24,8 @@ class QualbumMain : Gtk.Window
         workingDir.DirectoryChangedEvent += changeWorkingDirectoryHandler;
 
         photoPresenter = new PhotoPresenter(workingDir);
+        menuPresenter = new MenuPresenter();
+        toolbarPresenter = new ToolbarPresenter();
 
         DeleteEvent += new DeleteEventHandler(OnDelete);
         KeyPressEvent += new KeyPressEventHandler(OnKeyPress);
@@ -47,11 +50,8 @@ class QualbumMain : Gtk.Window
         // All app is a vbox
         VBox app = new VBox(false, 0);
 
-        MenuView menu = new MenuView();
-        app.PackStart(menu.Widget, false, true, 0);
-
-        ToolbarView toolbar = new ToolbarView();
-        app.PackStart(toolbar.Widget, false, false, 0);
+        app.PackStart(menuPresenter.Widget, false, true, 0);
+        app.PackStart(toolbarPresenter.Widget, false, false, 0);
 
 
         // Add activeDirectoryLabel
@@ -71,7 +71,8 @@ class QualbumMain : Gtk.Window
         Container mainScreen = new HBox();
         app.PackStart(mainScreen, true, true, 3);
 
-        photoPresenter.AttachWidget(mainScreen);
+        mainScreen.Add(photoPresenter.Widget);
+        //photoPresenter.AttachWidget(mainScreen);
 
         return app;
     }

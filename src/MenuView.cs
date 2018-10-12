@@ -3,14 +3,14 @@ using System;
 
 public class MenuView
 {
-    private MenuPresenter Presenter;
+    private MenuPresenter presenter;
 
-    public MenuView()
+    public MenuView(MenuPresenter presenter)
     {
-        this.Presenter = new MenuPresenter(this);
+        this.presenter = presenter;
     }
 
-    public MenuBar Widget
+    public Widget AsWidget
     { 
         get
         {
@@ -58,7 +58,7 @@ public class MenuView
 
     private void OnExit(object sender, EventArgs args)
     {
-        Presenter.Exit();
+        presenter.Exit();
     }
 
     private void OnAbout(object sender, EventArgs args)
