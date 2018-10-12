@@ -9,8 +9,8 @@ class PhotoPresenter
 
     public PhotoPresenter(WorkingDirModel model)
     {
-        model = model;
-        view = new PhotoView();
+        this.model = model;
+        this.view = new PhotoView();
     }
 
     public void FirstPhoto()

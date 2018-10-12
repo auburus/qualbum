@@ -72,7 +72,6 @@ class Qualbum : Gtk.Window
         app.PackStart(mainScreen, true, true, 3);
 
         mainScreen.Add(photoPresenter.Widget);
-        //photoPresenter.AttachWidget(mainScreen);
 
         return app;
     }
