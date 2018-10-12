@@ -13,6 +13,7 @@ class PhotoView
 
     private Label pathLabel;
     private Label sizeLabel;
+    private Label dateLabel;
     private Label dimLabel;
 
     public PhotoView()
@@ -78,6 +79,8 @@ class PhotoView
 
         sizeLabel.Text = size.ToString("0.0") + " " + unit;
 
+        dateLabel.Text = Finder.GuessDate(photoFile).ToString("dd MMM yyyy");
+
     }
 
     private void Initialize()
@@ -110,14 +113,20 @@ class PhotoView
 
         t.Attach(new Label("Path: "), 0, 1, 0, 1,
                 Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
-        pathLabel = new Label("pathlabel");
+        pathLabel = new Label("");
         t.Attach(pathLabel, 1, 2, 0, 1,
                 Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
 
         t.Attach(new Label("Size: "), 0, 1, 1, 2,
                 Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
-        sizeLabel = new Label("sizeLabel");
+        sizeLabel = new Label("");
         t.Attach(sizeLabel, 1, 2, 1, 2,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+
+        t.Attach(new Label("Date: "), 0, 1, 2, 3,
+                Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
+        dateLabel = new Label("");
+        t.Attach(dateLabel, 1, 2, 2, 3,
                 Gtk.AttachOptions.Shrink, Gtk.AttachOptions.Shrink, 0, 0);
 
         // t.Attach(new Label("Dimensions: "), 0, 1, 2, 3,

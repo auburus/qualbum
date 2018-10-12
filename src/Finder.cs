@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -27,6 +28,29 @@ static class Finder
                         f.Extension,
                         @"\.[jpg|jpeg|png|gif]",
                         RegexOptions.IgnoreCase
-            ));
+            ))
+            .OrderBy( f => GuessDate(f) );
+    }
+
+
+    /**
+      * Tries to guess the date from the file name. If not, it defaults
+      * to the creation time
+      */
+    public static DateTime GuessDate(FileInfo f)
+    {
+        Regex rx = new Regex(@"[^\d]*(\d{8})[^\d]{1}.*",
+                RegexOptions.Compiled);
+
+        MatchCollection matches = rx.Matches(f.Name);
+
+        if (matches.Count == 1 ) {
+            String date = matches[0].Groups[1].Value;
+            return new DateTime(Int32.Parse(date.Substring(0,4)),
+                    Int32.Parse(date.Substring(4,2)),
+                    Int32.Parse(date.Substring(6,2)));
+        }
+
+        return f.CreationTime;
     }
 }
