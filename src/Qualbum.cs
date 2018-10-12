@@ -5,7 +5,7 @@ using Gdk;
 using System.Linq;
 using System.Collections.Generic; // Remove when remove dict
 
-class QualbumMain : Gtk.Window
+class Qualbum : Gtk.Window
 {
     Label ActiveDirectoryLabel;
     Label ImageCounterLabel;
@@ -14,7 +14,7 @@ class QualbumMain : Gtk.Window
     private MenuPresenter menuPresenter;
     private ToolbarPresenter toolbarPresenter;
 
-    public QualbumMain() : base("Qualbum")
+    public Qualbum() : base("Qualbum")
     {
         SetDefaultSize(800, 600);
         SetPosition(WindowPosition.Center);
@@ -41,7 +41,7 @@ class QualbumMain : Gtk.Window
     public static void Main()
     {
         Application.Init();
-        new QualbumMain();
+        new Qualbum();
         Application.Run();
     }
 
