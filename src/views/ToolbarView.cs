@@ -28,8 +28,7 @@ public class ToolbarView
 
     private void OnChooseFolderClicked(object obj, EventArgs args)
     {
-        presenter.ChooseFolderClicked();
-        //ShowChooseFolderDialog();
+        presenter.ShowChooseFolderDialog();
     }
 }
 

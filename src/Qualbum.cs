@@ -7,8 +7,6 @@ using System.Collections.Generic; // Remove when remove dict
 
 class Qualbum : Gtk.Window
 {
-    Label ActiveDirectoryLabel;
-    Label ImageCounterLabel;
     private WorkingDirModel workingDir;
     private PhotoPresenter photoPresenter;
     private MenuPresenter menuPresenter;
@@ -21,16 +19,17 @@ class Qualbum : Gtk.Window
         SetIconFromFile("icon.png");
 
         workingDir = new WorkingDirModel();
-        workingDir.DirectoryChangedEvent += changeWorkingDirectoryHandler;
 
         photoPresenter = new PhotoPresenter(workingDir);
         menuPresenter = new MenuPresenter();
-        toolbarPresenter = new ToolbarPresenter();
+        toolbarPresenter = new ToolbarPresenter(this, workingDir);
 
         DeleteEvent += new DeleteEventHandler(OnDelete);
         KeyPressEvent += new KeyPressEventHandler(OnKeyPress);
+        workingDir.DirectoryChangedEvent +=
+            photoPresenter.WorkingDirectoryChangedHandler;
         
-        VBox app = BuildApp();
+        Widget app = BuildApp();
 
         Add(app);
         Maximize();
@@ -45,71 +44,17 @@ class Qualbum : Gtk.Window
         Application.Run();
     }
 
-    private VBox BuildApp()
+    private Widget BuildApp()
     {
         // All app is a vbox
         VBox app = new VBox(false, 0);
 
         app.PackStart(menuPresenter.Widget, false, true, 0);
         app.PackStart(toolbarPresenter.Widget, false, false, 0);
-
-
-        // Add activeDirectoryLabel
-        HBox activeDirectoryBox = new HBox(false, 0);
-        ActiveDirectoryLabel = new Label("No directory currently selected");
-        activeDirectoryBox.PackStart(ActiveDirectoryLabel, false, false, 15);
-        ImageCounterLabel = new Label("0 of 0");
-        activeDirectoryBox.PackStart(ImageCounterLabel, false, false, 15);
-
-        app.PackStart(activeDirectoryBox, false, false, 5);
-
-        HSeparator separator = new HSeparator();
-        app.PackStart(separator, false, false, 0);
-
-        // Define mainscreen
-
-        Container mainScreen = new HBox();
-        app.PackStart(mainScreen, true, true, 3);
-
-        mainScreen.Add(photoPresenter.Widget);
+        app.PackStart(photoPresenter.Widget, true, true, 3);
 
         return app;
     }
-
-    void ShowChooseFolderDialog()
-    {
-        FileChooserDialog fc = new FileChooserDialog(
-                "Select folder",
-                this,
-                FileChooserAction.SelectFolder,
-                "Cancel" , ResponseType.Cancel,
-                "Select", ResponseType.Accept);
-
-        if (fc.Run() == (int)ResponseType.Accept)
-        {
-            workingDir.ChangeDirectory(new DirectoryInfo(fc.CurrentFolder));
-        }
-
-        fc.Destroy();
-    }
-
-    public void changeWorkingDirectoryHandler(object sender, DirectoryChangedEventArgs eventArgs)
-    {
-        ActiveDirectoryLabel.Text = eventArgs.NewDirectory.FullName;
-        photoPresenter.FirstPhoto();
-    }
-
-    /*
-    void UpdateImageCounterLabel()
-    {
-        if (DisplayController.ImageFiles.Any()) {
-            ImageCounterLabel.Text =
-                (DisplayController.ImageIndex + 1).ToString() +
-                " of " +
-                DisplayController.ImageFiles.Count.ToString();
-        }
-    }
-    */
 
     [GLib.ConnectBefore]
     void OnKeyPress(object sender, Gtk.KeyPressEventArgs args)
@@ -120,7 +65,7 @@ class Qualbum : Gtk.Window
             switch (args.Event.Key)
             {
                 case Gdk.Key.o:
-                    ShowChooseFolderDialog();
+                    toolbarPresenter.ChooseFolder();
                     break;
 
                 case Gdk.Key.h:

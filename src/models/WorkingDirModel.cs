@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-class WorkingDirModel
+public class WorkingDirModel
 {
     
     private DirectoryInfo dir;
@@ -32,6 +32,10 @@ class WorkingDirModel
             this.DirectoryChangedEvent(this, args);
         } 
     }
+
+    public int CurrentPhotoIndex { get { return this.photoIndex; } }
+
+    public int TotalNumberPhotos { get { return this.photos.Count; } }
 
     public void GoFirstPhoto()
     {

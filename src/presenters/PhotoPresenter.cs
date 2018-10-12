@@ -46,6 +46,8 @@ class PhotoPresenter
         } 
 
         this.view.Display(path);
+        this.view.UpdateCounterLabel(model.CurrentPhotoIndex,
+                model.TotalNumberPhotos);
     }
 
     public Widget Widget { get { return this.view.AsWidget; } }
@@ -60,4 +62,12 @@ class PhotoPresenter
             );
         }
     }
+
+    public void WorkingDirectoryChangedHandler(object sender,
+            DirectoryChangedEventArgs eventArgs)
+    {
+        this.view.ActiveDirectoryLabel.Text = eventArgs.NewDirectory.FullName;
+        this.FirstPhoto();
+    }
+
 }

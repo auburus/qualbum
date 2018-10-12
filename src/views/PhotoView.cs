@@ -3,7 +3,10 @@ using Gtk;
 
 class PhotoView
 {
-    private HBox box;
+    public Label ActiveDirectoryLabel;
+    private Label imageCounterLabel;
+
+    private VBox mainBox;
     private VBox sideBar;
     private Bin imageBin;
     private Image photo;
@@ -13,7 +16,7 @@ class PhotoView
         Initialize();
     }
 
-    public Widget AsWidget { get { return box; } }
+    public Widget AsWidget { get { return mainBox; } }
 
     public void Display(string path)
     {
@@ -26,6 +29,12 @@ class PhotoView
 
         Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(path);
         Display(pixbuf);
+    }
+
+    public void UpdateCounterLabel(int currentPhoto, int totalPhotos)
+    {
+        this.imageCounterLabel.Text = (currentPhoto+1).ToString() + " of " +
+            totalPhotos.ToString();
     }
 
     private void Display(Gdk.Pixbuf pixbuf)
@@ -47,7 +56,21 @@ class PhotoView
 
     private void Initialize()
     {
-        box = new HBox(false, 0);
+        mainBox = new VBox(false, 0);
+
+        HBox activeDirectoryBox = new HBox(false, 0);
+        ActiveDirectoryLabel = new Label("No directory currently selected");
+        activeDirectoryBox.PackStart(ActiveDirectoryLabel, false, false, 15);
+        imageCounterLabel = new Label("0 of 0");
+        activeDirectoryBox.PackStart(imageCounterLabel, false, false, 5);
+
+        mainBox.PackStart(activeDirectoryBox, false, false, 0);
+
+        HSeparator separator = new HSeparator();
+        mainBox.PackStart(separator, false, false, 0);
+
+
+        HBox box = new HBox(false, 0);
         sideBar = new VBox(false, 0);
         VSeparator sideBarSeparator = new VSeparator();
 
@@ -62,5 +85,7 @@ class PhotoView
 
         photo = new Image();
         imageBin.Add(photo);
+
+        mainBox.PackStart(box, true, true, 3);
     }
 }
