@@ -29,13 +29,23 @@ static class Finder
                         @"\.[jpg|jpeg|png]",
                         RegexOptions.IgnoreCase
             ))
-            .OrderBy( f => GuessDate(f) );
+            .OrderBy( f => GuessOrder(f) );
     }
 
 
+    public static String GuessOrder(FileInfo f)
+    {
+        DateTime guessedDate = GuessDate(f);
+        if (guessedDate == f.CreationTime) {
+            return f.Name;
+        }
+
+        return guessedDate.ToString("ddMMyyyy");
+    }
+
     /**
       * Tries to guess the date from the file name. If not, it defaults
-      * to the creation time
+      * to the creationTime
       */
     public static DateTime GuessDate(FileInfo f)
     {
