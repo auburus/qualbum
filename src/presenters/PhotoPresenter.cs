@@ -50,6 +50,24 @@ class PhotoPresenter
                 model.TotalNumberPhotos);
     }
 
+    public void Rotate(Gdk.PixbufRotation rotation)
+    {
+        this.view.Rotate(rotation);
+
+        // Rotate the original picture and save it
+        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(this.model.CurrentPhoto.FullName);
+        pixbuf = pixbuf.RotateSimple(rotation);
+
+        // All images provided by finder are jpgs or pngs
+        String extension = this.model.CurrentPhoto.Extension
+            .Substring(1).ToLower();
+
+        if (extension == "jpg") {
+            extension = "jpeg";
+        }
+        pixbuf.Save(this.model.CurrentPhoto.FullName, extension);
+    }
+
     public Widget Widget { get { return this.view.AsWidget; } }
 
     private FileInfo defaultPhoto {

@@ -16,6 +16,8 @@ class PhotoView
     private Label dateLabel;
     private Label dimLabel;
 
+    private Gdk.Pixbuf pixbuf;
+
     public PhotoView()
     {
         Initialize();
@@ -32,7 +34,7 @@ class PhotoView
         GC.Collect();
         GC.WaitForPendingFinalizers();
 
-        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(photoFile.FullName);
+        pixbuf = new Gdk.Pixbuf(photoFile.FullName);
         Display(pixbuf);
 
         fillLabels(photoFile);
@@ -42,6 +44,12 @@ class PhotoView
     {
         this.imageCounterLabel.Text = (currentPhoto+1).ToString() + " of " +
             totalPhotos.ToString();
+    }
+
+    public void Rotate(Gdk.PixbufRotation rotation)
+    {
+        this.pixbuf = this.pixbuf.RotateSimple(rotation);
+        Display(pixbuf);
     }
 
     private void Display(Gdk.Pixbuf pixbuf)

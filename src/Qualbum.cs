@@ -84,6 +84,20 @@ class Qualbum : Gtk.Window
                         workingDir.HashDifference(hash1, hash2)
                     );
                     break;
+
+            }
+        }
+        else if ((args.Event.State & Gdk.ModifierType.ShiftMask) ==
+            Gdk.ModifierType.ShiftMask)
+        {
+            switch (args.Event.Key)
+            {
+                case Gdk.Key.Left:
+                    photoPresenter.Rotate(Gdk.PixbufRotation.Counterclockwise);
+                    break;
+                case Gdk.Key.Right:
+                    photoPresenter.Rotate(Gdk.PixbufRotation.Clockwise);
+                    break;
             }
         }
         else if ((args.Event.State & Gdk.ModifierType.None) ==

@@ -26,7 +26,7 @@ static class Finder
             .Where( f => (f.Attributes & FileAttributes.Hidden) == 0)
             .Where( f => Regex.IsMatch(
                         f.Extension,
-                        @"\.[jpg|jpeg|png|gif]",
+                        @"\.[jpg|jpeg|png]",
                         RegexOptions.IgnoreCase
             ))
             .OrderBy( f => GuessDate(f) );
