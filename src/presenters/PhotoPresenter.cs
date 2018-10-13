@@ -45,7 +45,13 @@ class PhotoPresenter
             return;
         } 
 
-        this.view.Display(photoFile);
+        try {
+            this.view.Display(photoFile);
+        } catch (GLib.GException e) {
+            this.view.Display(this.defaultPhoto);
+        }
+
+        this.view.FillLabels(photoFile);
         this.view.UpdateCounterLabel(model.CurrentPhotoIndex,
                 model.TotalNumberPhotos);
     }

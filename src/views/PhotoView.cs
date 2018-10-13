@@ -36,8 +36,6 @@ class PhotoView
 
         pixbuf = new Gdk.Pixbuf(photoFile.FullName);
         Display(pixbuf);
-
-        fillLabels(photoFile);
     }
 
     public void UpdateCounterLabel(int currentPhoto, int totalPhotos)
@@ -52,24 +50,7 @@ class PhotoView
         Display(pixbuf);
     }
 
-    private void Display(Gdk.Pixbuf pixbuf)
-    {
-        double ratio = Math.Min(
-            photo.Allocation.Width / Convert.ToDouble(pixbuf.Width),
-            photo.Allocation.Height / Convert.ToDouble(pixbuf.Height)
-        );
-        
-        if (ratio < 1)
-        {
-            pixbuf = pixbuf.ScaleSimple(
-                Convert.ToInt32(Math.Round(pixbuf.Width * ratio)),
-                Convert.ToInt32(Math.Round(pixbuf.Height * ratio)),
-                Gdk.InterpType.Bilinear);
-        }
-        photo.Pixbuf = pixbuf;
-    }
-
-    private void fillLabels(FileInfo photoFile)
+    public void FillLabels(FileInfo photoFile)
     {
         pathLabel.Text = photoFile.FullName;
 
@@ -89,6 +70,23 @@ class PhotoView
 
         dateLabel.Text = Finder.GuessDate(photoFile).ToString("dd MMM yyyy");
 
+    }
+
+    private void Display(Gdk.Pixbuf pixbuf)
+    {
+        double ratio = Math.Min(
+            photo.Allocation.Width / Convert.ToDouble(pixbuf.Width),
+            photo.Allocation.Height / Convert.ToDouble(pixbuf.Height)
+        );
+        
+        if (ratio < 1)
+        {
+            pixbuf = pixbuf.ScaleSimple(
+                Convert.ToInt32(Math.Round(pixbuf.Width * ratio)),
+                Convert.ToInt32(Math.Round(pixbuf.Height * ratio)),
+                Gdk.InterpType.Bilinear);
+        }
+        photo.Pixbuf = pixbuf;
     }
 
     private void Initialize()
