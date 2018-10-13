@@ -69,9 +69,13 @@ public class WorkingDirModel
     private void createDeletedFolder() {
         DirectoryInfo[] dirs = dir.GetDirectories(".deleted");
 
-        // Check if directory exists
+        // Check if directory exists, and empty it if its the case
         if (dirs.Length == 1) {
             deletedDir = dirs[0];
+            foreach (FileInfo file in deletedDir.GetFiles())
+            {
+                    file.Delete(); 
+            }
         } else {
             deletedDir = this.dir.CreateSubdirectory(".deleted");
         }
