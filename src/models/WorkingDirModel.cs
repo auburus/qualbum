@@ -44,7 +44,9 @@ public class WorkingDirModel
     
     public void IncrementPhoto(int i)
     {
-        photoIndex = (photoIndex + photos.Count + i) % photos.Count;
+        if (photos.Any()) {
+            photoIndex = (photoIndex + photos.Count + i) % photos.Count;
+        }
     }
 
     public FileInfo CurrentPhoto {
