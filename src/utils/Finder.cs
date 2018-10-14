@@ -33,6 +33,11 @@ static class Finder
     }
 
 
+    /**
+      * If we can't figure out a data from the filename,
+      * let's rely on the name itself, better than the
+      * creationTime
+      */
     public static String GuessOrder(FileInfo f)
     {
         DateTime guessedDate = GuessDate(f);

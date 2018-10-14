@@ -8,6 +8,7 @@ using System.Collections.Generic; // Remove when remove dict
 class Qualbum : Gtk.Window
 {
     private WorkingDirModel workingDir;
+    private LibraryModel library;
     private PhotoPresenter photoPresenter;
     private MenuPresenter menuPresenter;
     private ToolbarPresenter toolbarPresenter;
