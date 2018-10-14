@@ -11,36 +11,47 @@ public class Test
 {
     public static void Main()
     {
+        int totalTests = 0;
+        int passedTests = 0;
 
         IEnumerable<Type> classes = Assembly.GetExecutingAssembly().GetTypes()
-            .Where( t => t.IsClass );
+            .Where( t =>
+                t.IsClass &&
+                t.Name.Length >= 4 &&
+                t.Name.Substring(0,4) == "Test");
 
         foreach (Type c in classes) {
-            if (c.Name.Length >= 4 && c.Name.Substring(0,4) == "Test") {
-                foreach (MethodInfo m in
-                        c.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                {
-                    if (m.Name.Length >= 4 && m.Name.Substring(0,4) == "Test") {
-                        try {
-                            m.Invoke(null, null);
-                        } catch (TargetInvocationException e) {
-                            Console.WriteLine("Assertion failed in <" + c.Name +
-                                "." + m.Name + "()>: " + e.InnerException.Message);
-                        }
-                    }
+            IEnumerable<MethodInfo> methods =
+                c.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where( m =>
+                    m.Name.Length >= 4 &&
+                    m.Name.Substring(0,4) == "Test");
+
+            foreach (MethodInfo m in methods) {
+                object obj = Activator.CreateInstance(c);
+
+                try {
+                    totalTests++;
+                    m.Invoke(obj, null);
+                    passedTests++;
+                } catch (TargetInvocationException e) {
+                    Console.WriteLine("Assertion failed in <" + c.Name +
+                        "." + m.Name + "()>: " + e.InnerException.Message);
                 }
             }
         }
-        //TestLibrary.TestConstructor();
+
+        Console.WriteLine("\n\nResult: " + passedTests.ToString() + " of " +
+            totalTests.ToString() + " passed");
     }
 
-    public static void Assert(bool condition)
+    public void Assert(bool condition)
     {
         if (!condition) {
             throw new AssertException("Asserting that false was true");
         }
     }
-    public static void Assert(bool condition, String message)
+    public void Assert(bool condition, String message)
     {
         if (!condition) {
             throw new AssertException(message);
@@ -55,7 +66,7 @@ class AssertException : Exception {
 
 class TestLibrary : Test
 {
-    public static void TestConstructor()
+    public void TestConstructor()
     {
         LibraryModel lib = new LibraryModel("./test/library");
         Assert(lib.BaseFolder.Name == "library");
