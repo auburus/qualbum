@@ -59,6 +59,10 @@ public class WorkingDirModel
     }
 
     public void DeleteCurrentPhoto() {
+        if (!this.photos.Any()) {
+            return;
+        }
+
         this.CurrentPhoto.MoveTo(
                 Path.Combine(deletedDir.FullName, this.CurrentPhoto.Name));
 
