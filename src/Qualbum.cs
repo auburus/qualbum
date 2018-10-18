@@ -38,16 +38,29 @@ class Qualbum : Gtk.Window
         ShowAll();
     }
 
-    public static void Main()
+    public static void Run()
     {
         Application.Init();
         new Qualbum();
         Application.Run();
     }
 
+    public static DirectoryInfo BaseFolder {
+        get {
+            return new FileInfo(
+                System.Reflection.Assembly.GetExecutingAssembly().Location
+                ).Directory;
+        }
+    }
+
+    public static DirectoryInfo ConfigFolder {
+        get {
+            return Qualbum.BaseFolder.GetDirectories("config")[0];
+        }
+    }
+
     private Widget BuildApp()
     {
-        // All app is a vbox
         VBox app = new VBox(false, 0);
 
         app.PackStart(menuPresenter.Widget, false, true, 0);
@@ -130,6 +143,7 @@ class Qualbum : Gtk.Window
     }
 }
 
+//TODO Move that to a proper file
 class DirectoryWithoutImagesException : Exception
 {
     public DirectoryWithoutImagesException() : base() {}

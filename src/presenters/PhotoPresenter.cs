@@ -78,14 +78,7 @@ class PhotoPresenter
 
     private FileInfo defaultPhoto {
         get {
-            return new FileInfo(
-                Path.Combine(
-                    new FileInfo(
-                        System.Reflection.Assembly.GetExecutingAssembly().Location
-                    ).Directory.FullName,
-                    "config" + Path.DirectorySeparatorChar + "default.jpg"
-                )
-            );
+            return Qualbum.ConfigFolder.GetFiles("default.jpg")[0];
         }
     }
 
