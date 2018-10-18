@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Data.Sqlite;
 
 /// <summary>
 /// A library is the base folder where all photos end up organized
@@ -9,10 +10,19 @@ using System.Linq;
 public class LibraryModel
 {
     private DirectoryInfo baseFolder;
+    private SqliteConnection dbConnection;
 
     public LibraryModel(DirectoryInfo dir)
     {
+        if (!dir.Exists) {
+            throw new Exception(dir.FullName + " doesn't exist!");
+        }
         this.baseFolder = dir;
+        this.checkOrCreateQualbumFolder();
+
+        this.dbConnection = prepareConnection();
+
+        this.dbConnection.Close();
     }
 
     public LibraryModel(String path) : this(new DirectoryInfo(path)) 
@@ -20,6 +30,12 @@ public class LibraryModel
     }
 
     public DirectoryInfo BaseFolder { get { return this.baseFolder; } }
+
+    public DirectoryInfo QualbumFolder {
+        get {
+            return this.baseFolder.GetDirectories(".qualbum")[0];
+        }
+    }
 
     /// Gets all the subdirectories in the tree given by the current directory
     /// It dynamically computes them so if a new one is added, it will get
@@ -41,5 +57,32 @@ public class LibraryModel
                 yield return dir;
             }
         }
+    }
+
+    private void checkOrCreateQualbumFolder()
+    {
+        DirectoryInfo qualbumFolder = new DirectoryInfo(
+            Path.Combine(this.BaseFolder.FullName, ".qualbum")
+        );
+        qualbumFolder.Create(); // It does nothing if it alredy exists
+    }
+
+    private SqliteConnection prepareConnection()
+    {
+        SqliteConnection conn = new SqliteConnection(
+            String.Format("Data Source={0}",
+                Path.Combine(this.QualbumFolder.FullName, "db.sqlite")
+            )
+        );
+
+        /*SqliteCommand command = new SqliteCommand(conn);
+        command.CommandText =
+            @"CREATE TABLE IF NOT EXISTS deletedPhotos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                */
+
+        this.dbConnection.Open();
+
+        return conn;
     }
 }
