@@ -16,18 +16,20 @@ public class MenuView
         {
             MenuBar menuBar = new MenuBar();
 
-            MenuItem file = FileMenuItem();
+            MenuItem file = fileMenuItem();
             menuBar.Append(file);
 
-            // Add help menu
-            MenuItem help = HelpMenuItem();
+            MenuItem library = libraryMenuItem();
+            menuBar.Append(library);
+
+            MenuItem help = helpMenuItem();
             menuBar.Append(help);
 
             return menuBar;
         }
     }
 
-    private MenuItem FileMenuItem()
+    private MenuItem fileMenuItem()
     {
         MenuItem file = new MenuItem("File");
 
@@ -41,7 +43,25 @@ public class MenuView
         return file;
     }
     
-    private MenuItem HelpMenuItem()
+    private MenuItem libraryMenuItem()
+    {
+        MenuItem library = new MenuItem("Library");
+
+        Menu libraryMenu = new Menu();
+        library.Submenu = libraryMenu;
+
+        MenuItem conf = new MenuItem("Configure");
+        conf.Activated += OnConfigure;
+        libraryMenu.Append(conf);
+
+        MenuItem import = new MenuItem("Import folder...");
+        import.Activated += OnImport;
+        libraryMenu.Append(import);
+
+        return library;
+    }
+    
+    private MenuItem helpMenuItem()
     {
         MenuItem help = new MenuItem("Help");
 
@@ -76,4 +96,13 @@ public class MenuView
         dialog.Destroy();
     }
 
+    private void OnConfigure(object sender, EventArgs args)
+    {
+        // Display configure view (like preferences) with options and stuff
+    }
+
+    private void OnImport(object sender, EventArgs args)
+    {
+        // Select folder to import, and start the import process
+    }
 }
