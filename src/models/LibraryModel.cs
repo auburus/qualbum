@@ -3,10 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-
-/**
-  * A library is the base folder where all photos end up organized
-  */
+/// <summary>
+/// A library is the base folder where all photos end up organized
+/// </sumamry>
 public class LibraryModel
 {
     private DirectoryInfo baseFolder;
@@ -22,6 +21,9 @@ public class LibraryModel
 
     public DirectoryInfo BaseFolder { get { return this.baseFolder; } }
 
+    /// Gets all the subdirectories in the tree given by the current directory
+    /// It dynamically computes them so if a new one is added, it will get
+    /// catched up.
     public IEnumerable<DirectoryInfo> Subdirectories {
         get {
             return this.baseFolder
@@ -31,7 +33,8 @@ public class LibraryModel
         }
     }
 
-    public IEnumerable<DirectoryInfo> FindDirectories(String partialName)
+    /// Finds all the subdirectories that match with the partialName string
+    public IEnumerable<DirectoryInfo> SubdirectoriesMatch(String partialName)
     {
         foreach (DirectoryInfo dir in this.Subdirectories) {
             if (dir.Name.ToLower().Contains(partialName)) {

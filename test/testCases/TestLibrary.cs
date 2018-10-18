@@ -30,7 +30,14 @@ public class TestLibrary : Test
 
         String[] correctDirs = new String[] { "2017-08-12 Anna a Colorado",
             "2017-09-11 Festa catalans", "2018-03-15 Herman Gulch"};
-        AssertEnumerableEqual(lib.FindDirectories("an").Select(x => x.Name),
+
+        AssertEnumerableEqual(lib.SubdirectoriesMatch("an").Select(x => x.Name),
+                correctDirs);
+
+
+        correctDirs = new String[] { "2018", "2018-03-15 Herman Gulch" };
+
+        AssertEnumerableEqual(lib.SubdirectoriesMatch("18").Select(x => x.Name),
                 correctDirs);
     }
 }
