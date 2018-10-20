@@ -15,9 +15,12 @@ public class TestLibrary : Test
     {
         LibraryModel lib = new LibraryModel("./test/library");
 
-        String[] correctDirs = new String[] {"library", "2017", "2018",
+        String[] correctDirs = new String[] {"library",
+            "2017",
             "2017-08-12 Anna a Colorado",
-            "2017-09-11 Festa catalans", "2018-03-15 Herman Gulch"};
+            "2017-09-11 Festa catalans",
+            "2018",
+            "2018-03-15 Herman Gulch"};
 
 
         AssertEnumerableEqual(lib.Subdirectories.Select( x => x.Name),

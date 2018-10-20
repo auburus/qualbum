@@ -21,8 +21,6 @@ public class LibraryModel
         this.checkOrCreateQualbumFolder();
 
         this.dbConnection = prepareConnection();
-
-        this.dbConnection.Close();
     }
 
     public LibraryModel(String path) : this(new DirectoryInfo(path)) 
@@ -37,16 +35,32 @@ public class LibraryModel
         }
     }
 
+    public SqliteConnection DbConnection {
+        get {
+            return this.dbConnection;
+        }
+    }
+
     /// Gets all the subdirectories in the tree given by the current directory
     /// It dynamically computes them so if a new one is added, it will get
     /// catched up.
     public IEnumerable<DirectoryInfo> Subdirectories {
         get {
-            return this.baseFolder
-                .EnumerateDirectories("*", SearchOption.AllDirectories)
-                .Prepend(this.baseFolder)
-                .Where ( d => (d.Attributes & FileAttributes.Hidden) == 0);
+            return this.subdirectories(this.baseFolder);
         }
+    }
+
+    /// Makes sure to ignore all the tree under a hidden folder
+    private IEnumerable<DirectoryInfo> subdirectories(DirectoryInfo dir)
+    {
+        return dir.EnumerateDirectories("*")
+            .Where( d => (!d.Attributes.HasFlag(FileAttributes.Hidden)))
+            .Select( d => this.subdirectories(d))
+            .Aggregate(
+                Enumerable.Empty<DirectoryInfo>(),
+                (list, newlist) => list.Concat(newlist)
+            )
+            .Prepend(dir);
     }
 
     /// Finds all the subdirectories that match with the partialName string
@@ -65,6 +79,10 @@ public class LibraryModel
             Path.Combine(this.BaseFolder.FullName, ".qualbum")
         );
         qualbumFolder.Create(); // It does nothing if it alredy exists
+
+        if ( ! qualbumFolder.Attributes.HasFlag(FileAttributes.Hidden)) {
+            qualbumFolder.Attributes |= FileAttributes.Hidden;
+        }
     }
 
     private SqliteConnection prepareConnection()
@@ -75,13 +93,8 @@ public class LibraryModel
             )
         );
 
-        /*SqliteCommand command = new SqliteCommand(conn);
-        command.CommandText =
-            @"CREATE TABLE IF NOT EXISTS deletedPhotos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                */
+        conn.Open();
 
-        this.dbConnection.Open();
 
         return conn;
     }

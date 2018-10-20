@@ -32,7 +32,9 @@ public class Test
 
                 try {
                     totalTests++;
+                    c.GetMethod("Setup").Invoke(obj, null);
                     m.Invoke(obj, null);
+                    c.GetMethod("Teardown").Invoke(obj, null);
                     passedTests++;
                 } catch (TargetInvocationException e) {
                     Console.WriteLine("Assertion failed in <" + c.Name +
@@ -44,6 +46,9 @@ public class Test
         Console.WriteLine("\n\nResult: " + passedTests.ToString() + " of " +
                 totalTests.ToString() + " passed");
     }
+
+    public virtual void Setup() {}
+    public virtual void Teardown() {}
 
     public void Assert(bool condition)
     {
@@ -80,7 +85,9 @@ public class Test
     {
         Assert(list1.Count()==list2.Count(), "Failed asserting that list1 ("
                 + list1.Count() + " items) equals list2 (" +
-                list2.Count() + " items)");
+                list2.Count() + " items)\n" +
+                "List 1: [" + String.Join(",", list1.ToArray()) + "]\n" +
+                "List 2: [" + String.Join(",", list2.ToArray()) + "]\n");
 
         var enumerator = list2.GetEnumerator();
 
