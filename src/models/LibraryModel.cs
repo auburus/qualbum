@@ -10,7 +10,6 @@ using Mono.Data.Sqlite;
 public class LibraryModel
 {
     private DirectoryInfo baseFolder;
-    private SqliteConnection dbConnection;
 
     public LibraryModel(DirectoryInfo dir)
     {
@@ -20,7 +19,6 @@ public class LibraryModel
         this.baseFolder = dir;
         this.checkOrCreateQualbumFolder();
 
-        this.dbConnection = prepareConnection();
     }
 
     public LibraryModel(String path) : this(new DirectoryInfo(path)) 
@@ -35,9 +33,11 @@ public class LibraryModel
         }
     }
 
-    public SqliteConnection DbConnection {
+    public String ConnectionString {
         get {
-            return this.dbConnection;
+            return String.Format("Data Source={0}",
+                Path.Combine(this.QualbumFolder.FullName, "db.sqlite")
+            );
         }
     }
 
@@ -83,19 +83,5 @@ public class LibraryModel
         if ( ! qualbumFolder.Attributes.HasFlag(FileAttributes.Hidden)) {
             qualbumFolder.Attributes |= FileAttributes.Hidden;
         }
-    }
-
-    private SqliteConnection prepareConnection()
-    {
-        SqliteConnection conn = new SqliteConnection(
-            String.Format("Data Source={0}",
-                Path.Combine(this.QualbumFolder.FullName, "db.sqlite")
-            )
-        );
-
-        conn.Open();
-
-
-        return conn;
     }
 }

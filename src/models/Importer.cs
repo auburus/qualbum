@@ -16,16 +16,24 @@ public class Importer
 
     public void Delete(FileInfo photoFile)
     {
-        SqliteCommand command = new SqliteCommand(this.library.DbConnection);
-        command.CommandText = 
-            @"INSERT INTO deleted_photos (path) VALUES
-            ('" + photoFile.FullName + "');";
+        long id;
+
+        using (SqliteConnection conn =
+                new SqliteConnection(this.library.ConnectionString))
+        {
+            conn.Open();
+
+            SqliteCommand command = new SqliteCommand(conn);
+            command.CommandText = 
+                @"INSERT INTO deleted_photos (path) VALUES
+                ('" + photoFile.FullName + "');";
 
 
-        command.ExecuteScalar();
+            command.ExecuteScalar();
 
-        command.CommandText = @"select last_insert_rowid();";
-        long id = (long)command.ExecuteScalar();
+            command.CommandText = @"select last_insert_rowid();";
+            id = (long)command.ExecuteScalar();
+        }
 
         photoFile.MoveTo(
             Path.Combine(
@@ -37,38 +45,45 @@ public class Importer
 
     public FileInfo RestoreLast()
     {
-        SqliteCommand command = new SqliteCommand(this.library.DbConnection);
-        command.CommandText = 
-            @"SELECT id, path FROM deleted_photos ORDER BY id DESC LIMIT 1;";
+        FileInfo photoFile = null;
+
+        using (SqliteConnection conn =
+                new SqliteConnection(this.library.ConnectionString))
+        {
+            conn.Open();
+
+            SqliteCommand command = new SqliteCommand(conn);
+            command.CommandText = 
+                @"SELECT id, path FROM deleted_photos ORDER BY id DESC LIMIT 1;";
 
 
-        SqliteDataReader reader = command.ExecuteReader();
+            SqliteDataReader reader = command.ExecuteReader();
 
-        if (!reader.Read()) {
-            return null;
+            if (reader.Read()) {
+                long id = (long)reader[0];
+                String path = (string)reader[1];
+
+                reader.Close();
+
+                photoFile = new FileInfo(
+                    Path.Combine(
+                        library.QualbumFolder.GetDirectories("deleted")[0].FullName,
+                        id.ToString()
+                    )
+                );
+
+                if (photoFile.Exists) {
+                    // There are that many things that can go wrong in this line...
+                    // i.e. folder no longer exists...
+                    photoFile.MoveTo(path); 
+                }
+
+                command.CommandText =
+                    @"DELETE FROM deleted_photos WHERE id=" + id.ToString() + ";";
+
+                command.ExecuteScalar();
+            }
         }
-
-        long id = (long)reader[0];
-        String path = (string)reader[1];
-
-        reader.Close();
-
-        FileInfo photoFile = new FileInfo(
-            Path.Combine(
-                library.QualbumFolder.GetDirectories("deleted")[0].FullName,
-                id.ToString()
-            )
-        );
-
-        // There are that many things that can go wrong in this line...
-        // i.e. folder no longer exists, file doesn't exist...
-        photoFile.MoveTo(path); 
-
-
-        command.CommandText =
-            @"DELETE FROM deleted_photos WHERE id=" + id.ToString() + ";";
-
-        command.ExecuteScalar();
 
         return photoFile;
     }
@@ -78,22 +93,18 @@ public class Importer
     /// </sumamry>
     private void createDeletedTable()
     {
-        SqliteCommand command = new SqliteCommand(this.library.DbConnection);
-        command.CommandText =
-            @"CREATE TABLE IF NOT EXISTS deleted_photos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                path TEXT NOT NULL
-            );";
+        using (SqliteConnection conn =
+                new SqliteConnection(this.library.ConnectionString))
+        {
+            conn.Open();
+            SqliteCommand command = new SqliteCommand(conn);
+            command.CommandText =
+                @"CREATE TABLE IF NOT EXISTS deleted_photos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    path TEXT NOT NULL
+                );";
 
-        command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
     }
-
-    /*private int lastDeletedId()
-    {
-        SqliteCommand command = new SqliteCommand(this.library.DbConnection);
-        command.CommandText = 
-            @"SELECT id FROM deleted_photos ORDER_BY id DESC LIMIT 1;";
-
-        return (int)command.ExecuteScalar();
-    }*/
 }

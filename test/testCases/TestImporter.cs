@@ -49,10 +49,4 @@ public class TestImporter : Test
 
         Assert(file == null, "File should be null");
     }
-
-    public override void Teardown()
-    {
-        this.library.DbConnection.Close();
-    }
-
 }
