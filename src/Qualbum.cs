@@ -21,7 +21,8 @@ class Qualbum : Gtk.Window
 
         workingDir = new WorkingDirModel();
 
-        photoPresenter = new PhotoPresenter(workingDir);
+
+        photoPresenter = new PhotoPresenter(new Importer(library));
         menuPresenter = new MenuPresenter();
         toolbarPresenter = new ToolbarPresenter(this, workingDir);
 
@@ -83,20 +84,7 @@ class Qualbum : Gtk.Window
                     break;
 
                 case Gdk.Key.h:
-                    List<System.Drawing.Color> hash1 = 
-                        workingDir.GetHashFromCurrent();
-
                     photoPresenter.NextPhoto();
-
-                    Console.WriteLine("\n\n----------------\n");
-
-                    List<System.Drawing.Color> hash2 = 
-                        workingDir.GetHashFromCurrent();
-                    Console.WriteLine("");
-
-                    Console.WriteLine(
-                        workingDir.HashDifference(hash1, hash2)
-                    );
                     break;
 
             }

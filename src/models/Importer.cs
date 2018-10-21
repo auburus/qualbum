@@ -36,10 +36,7 @@ public class Importer
         }
 
         photoFile.MoveTo(
-            Path.Combine(
-                library.QualbumFolder.GetDirectories("deleted")[0].FullName, 
-                id.ToString()
-            )
+            Path.Combine(library.DeletedFolder.FullName, id.ToString())
         );
     }
 
@@ -66,10 +63,7 @@ public class Importer
                 reader.Close();
 
                 photoFile = new FileInfo(
-                    Path.Combine(
-                        library.QualbumFolder.GetDirectories("deleted")[0].FullName,
-                        id.ToString()
-                    )
+                    Path.Combine(library.DeletedFolder.FullName, id.ToString())
                 );
 
                 if (photoFile.Exists) {
@@ -86,6 +80,25 @@ public class Importer
         }
 
         return photoFile;
+    }
+
+    /// Removes all deleted photos and records in the deleted table
+    public void RemoveAllDeleted()
+    {
+        foreach(FileInfo f in library.DeletedFolder.GetFiles()) {
+            f.Delete();
+        }
+
+        using (SqliteConnection conn =
+                new SqliteConnection(this.library.ConnectionString))
+        {
+            conn.Open();
+            SqliteCommand command = new SqliteCommand(conn);
+            command.CommandText = @"DROP TABLE deleted_photos;";
+            command.ExecuteNonQuery();
+        }
+
+        this.createDeletedTable();
     }
 
     /// <sumamry>

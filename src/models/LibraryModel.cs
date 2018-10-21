@@ -33,6 +33,12 @@ public class LibraryModel
         }
     }
 
+    public DirectoryInfo DeletedFolder {
+        get {
+            return this.QualbumFolder.GetDirectories("deleted")[0];
+        }
+    }
+
     public String ConnectionString {
         get {
             return String.Format("Data Source={0}",
@@ -71,6 +77,13 @@ public class LibraryModel
                 yield return dir;
             }
         }
+    }
+
+    /// Prepare all the things for this folder to be a library
+    public void Init()
+    {
+        // TODO
+        
     }
 
     private void checkOrCreateQualbumFolder()

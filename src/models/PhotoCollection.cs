@@ -9,11 +9,14 @@ class PhotoCollection
     private List<FileInfo> photos;
     private int index;
 
+
     public PhotoCollection(IEnumerable<FileInfo> photos)
     {
         this.photos = photos.ToList();
         index = 0;
     }
+
+    public PhotoCollection() : this(Enumerable.Empty<FileInfo>()) {}
 
     public int Count
     {

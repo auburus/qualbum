@@ -14,6 +14,8 @@ public class TestImporter : Test
             Qualbum.BaseFolder.GetDirectories("test")[0].GetDirectories("library")[0]
         );
         importer = new Importer(this.library);
+
+        importer.RemoveAllDeleted();
     }
 
     public void TestDeleteAndRestore()
