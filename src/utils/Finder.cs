@@ -68,4 +68,21 @@ static class Finder
 
         return f.CreationTime;
     }
+
+    /// Finds the relative path from dir to the file f
+    public static String FindRelativePath(DirectoryInfo dir, FileInfo f)
+    {
+        DirectoryInfo tmpDir = f.Directory;
+        while (tmpDir.FullName != tmpDir.Root.FullName)
+        {
+            if (tmpDir.FullName == dir.FullName) {
+                return f.FullName.Substring(dir.FullName.Length+1);
+            }
+
+            tmpDir = tmpDir.Parent;
+        }
+
+        // It means that f is not in the tree under dir
+        return "";
+    }
 }

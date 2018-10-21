@@ -52,7 +52,9 @@ class PhotoView
 
     public void FillLabels(FileInfo photoFile)
     {
-        pathLabel.Text = photoFile.FullName;
+        pathLabel.Text = Finder.FindRelativePath(
+                new DirectoryInfo(ActiveDirectoryLabel.Text),
+                photoFile);
 
         float size = photoFile.Length;
         String unit = "Bytes";
