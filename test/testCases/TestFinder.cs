@@ -1,29 +1,33 @@
 using System;
 using System.IO;
 
-public class TestFinder : Test
+namespace Qualbum
 {
-    public void TestFindRelativePath()
+
+    public class TestFinder : Test
     {
-        FileInfo f = new FileInfo(@"/home/hello/how/are/you\ doing/today/question.txt");
-        DirectoryInfo d = new DirectoryInfo(@"/home/hello/how");
+        public void TestFindRelativePath()
+        {
+            FileInfo f = new FileInfo(@"/home/hello/how/are/you\ doing/today/question.txt");
+            DirectoryInfo d = new DirectoryInfo(@"/home/hello/how");
 
-        String relPath = Finder.FindRelativePath(d, f);
+            String relPath = Finder.FindRelativePath(d, f);
 
-        AssertEqual(relPath, @"are/you\ doing/today/question.txt");
+            AssertEqual(relPath, @"are/you\ doing/today/question.txt");
+
+
+        }
+
+        public void TestUnvalidRelPath()
+        {
+            FileInfo f = new FileInfo(@"/home/hello/how/are/you\ doing/today/question.txt");
+            DirectoryInfo d = new DirectoryInfo(@"/home/hello/this/is/amazing");
+
+            String relPath = Finder.FindRelativePath(d, f);
+
+            AssertEqual(relPath, "");
+        }
 
 
     }
-
-    public void TestUnvalidRelPath()
-    {
-        FileInfo f = new FileInfo(@"/home/hello/how/are/you\ doing/today/question.txt");
-        DirectoryInfo d = new DirectoryInfo(@"/home/hello/this/is/amazing");
-
-        String relPath = Finder.FindRelativePath(d, f);
-
-        AssertEqual(relPath, "");
-    }
-
-
 }

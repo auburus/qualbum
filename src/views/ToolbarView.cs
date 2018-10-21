@@ -1,34 +1,38 @@
 using Gtk;
 using System;
 
-public class ToolbarView
+namespace Qualbum
 {
-    private ToolbarPresenter presenter;
 
-    public ToolbarView(ToolbarPresenter presenter)
+    public class ToolbarView
     {
-        this.presenter = presenter;
-    }
+        private ToolbarPresenter presenter;
 
-    public Toolbar AsWidget
-    {
-        get
+        public ToolbarView(ToolbarPresenter presenter)
         {
-            Toolbar toolbar = new Toolbar();
-            toolbar.ToolbarStyle = ToolbarStyle.Icons;
+            this.presenter = presenter;
+        }
 
-            ToolButton opentb = new ToolButton(Stock.Open);
-            opentb.Clicked += OnChooseFolderClicked;
+        public Toolbar AsWidget
+        {
+            get
+            {
+                Toolbar toolbar = new Toolbar();
+                toolbar.ToolbarStyle = ToolbarStyle.Icons;
 
-            toolbar.Insert(opentb, 0);
+                ToolButton opentb = new ToolButton(Stock.Open);
+                opentb.Clicked += OnChooseFolderClicked;
 
-            return toolbar;
+                toolbar.Insert(opentb, 0);
+
+                return toolbar;
+            }
+        }
+
+        private void OnChooseFolderClicked(object obj, EventArgs args)
+        {
+            presenter.ShowChooseFolderDialog();
         }
     }
 
-    private void OnChooseFolderClicked(object obj, EventArgs args)
-    {
-        presenter.ShowChooseFolderDialog();
-    }
 }
-

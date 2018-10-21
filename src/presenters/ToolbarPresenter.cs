@@ -1,42 +1,45 @@
 using Gtk;
 using System.IO;
 
-public class ToolbarPresenter
-{
-    private ToolbarView view;
-    private Gtk.Window window;
-    private WorkingDirModel workingDir;
+namespace Qualbum {
 
-    public ToolbarPresenter(Gtk.Window window, WorkingDirModel model)
+    public class ToolbarPresenter
     {
-        this.view = new ToolbarView(this);
-        this.window = window;
-        this.workingDir = model;
-    }
+        private ToolbarView view;
+        private Gtk.Window window;
+        private WorkingDirModel workingDir;
 
-    public Widget Widget { get { return this.view.AsWidget; } }
-
-    public void ChooseFolder()
-    {
-        ShowChooseFolderDialog();
-
-    }
-
-    public void ShowChooseFolderDialog()
-    {
-        Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog(
-                "Select folder",
-                this.window,
-                FileChooserAction.SelectFolder,
-                "Cancel" , ResponseType.Cancel,
-                "Select", ResponseType.Accept);
-
-        if (fc.Run() == (int)ResponseType.Accept)
+        public ToolbarPresenter(Gtk.Window window, WorkingDirModel model)
         {
-            this.workingDir.ChangeDirectory(new DirectoryInfo(fc.CurrentFolder));
+            this.view = new ToolbarView(this);
+            this.window = window;
+            this.workingDir = model;
         }
 
-        fc.Destroy();
-    }
+        public Widget Widget { get { return this.view.AsWidget; } }
 
+        public void ChooseFolder()
+        {
+            ShowChooseFolderDialog();
+
+        }
+
+        public void ShowChooseFolderDialog()
+        {
+            Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog(
+                    "Select folder",
+                    this.window,
+                    FileChooserAction.SelectFolder,
+                    "Cancel" , ResponseType.Cancel,
+                    "Select", ResponseType.Accept);
+
+            if (fc.Run() == (int)ResponseType.Accept)
+            {
+                this.workingDir.ChangeDirectory(new DirectoryInfo(fc.CurrentFolder));
+            }
+
+            fc.Destroy();
+        }
+
+    }
 }

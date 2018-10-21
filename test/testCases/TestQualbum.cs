@@ -2,12 +2,16 @@ using System;
 using System.IO;
 
 
-public class TestQualbum : Test
+namespace Qualbum
 {
 
-    public void TestConfigFolder()
+    public class TestQualbum : Test
     {
-        AssertEqual(Qualbum.ConfigFolder.FullName,
-                Qualbum.BaseFolder.GetDirectories("config")[0].FullName);
+
+        public void TestConfigFolder()
+        {
+            AssertEqual(Qualbum.ConfigFolder.FullName,
+                    Qualbum.BaseFolder.GetDirectories("config")[0].FullName);
+        }
     }
 }

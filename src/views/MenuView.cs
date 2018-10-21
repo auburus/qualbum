@@ -1,108 +1,111 @@
 using Gtk;
 using System;
 
-public class MenuView
-{
-    private MenuPresenter presenter;
+namespace Qualbum {
 
-    public MenuView(MenuPresenter presenter)
+    public class MenuView
     {
-        this.presenter = presenter;
-    }
+        private MenuPresenter presenter;
 
-    public Widget AsWidget
-    { 
-        get
+        public MenuView(MenuPresenter presenter)
         {
-            MenuBar menuBar = new MenuBar();
-
-            MenuItem file = fileMenuItem();
-            menuBar.Append(file);
-
-            MenuItem library = libraryMenuItem();
-            menuBar.Append(library);
-
-            MenuItem help = helpMenuItem();
-            menuBar.Append(help);
-
-            return menuBar;
+            this.presenter = presenter;
         }
-    }
 
-    private MenuItem fileMenuItem()
-    {
-        MenuItem file = new MenuItem("File");
+        public Widget AsWidget
+        { 
+            get
+            {
+                MenuBar menuBar = new MenuBar();
 
-        Menu fileMenu = new Menu();
-        file.Submenu = fileMenu;
+                MenuItem file = fileMenuItem();
+                menuBar.Append(file);
 
-        MenuItem exit = new MenuItem("Exit");
-        exit.Activated += OnExit;
-        fileMenu.Append(exit);
+                MenuItem library = libraryMenuItem();
+                menuBar.Append(library);
 
-        return file;
-    }
-    
-    private MenuItem libraryMenuItem()
-    {
-        MenuItem library = new MenuItem("Library");
+                MenuItem help = helpMenuItem();
+                menuBar.Append(help);
 
-        Menu libraryMenu = new Menu();
-        library.Submenu = libraryMenu;
+                return menuBar;
+            }
+        }
 
-        MenuItem conf = new MenuItem("Configure");
-        conf.Activated += OnConfigure;
-        libraryMenu.Append(conf);
+        private MenuItem fileMenuItem()
+        {
+            MenuItem file = new MenuItem("File");
 
-        MenuItem import = new MenuItem("Import folder...");
-        import.Activated += OnImport;
-        libraryMenu.Append(import);
+            Menu fileMenu = new Menu();
+            file.Submenu = fileMenu;
 
-        return library;
-    }
-    
-    private MenuItem helpMenuItem()
-    {
-        MenuItem help = new MenuItem("Help");
+            MenuItem exit = new MenuItem("Exit");
+            exit.Activated += OnExit;
+            fileMenu.Append(exit);
 
-        Menu helpMenu = new Menu();
-        help.Submenu = helpMenu;
+            return file;
+        }
+        
+        private MenuItem libraryMenuItem()
+        {
+            MenuItem library = new MenuItem("Library");
 
-        MenuItem about = new MenuItem("About");
-        about.Activated += OnAbout;
+            Menu libraryMenu = new Menu();
+            library.Submenu = libraryMenu;
 
-        helpMenu.Append(about);
+            MenuItem conf = new MenuItem("Configure");
+            conf.Activated += OnConfigure;
+            libraryMenu.Append(conf);
 
-        return help;
-    }
+            MenuItem import = new MenuItem("Import folder...");
+            import.Activated += OnImport;
+            libraryMenu.Append(import);
 
-    private void OnExit(object sender, EventArgs args)
-    {
-        presenter.Exit();
-    }
+            return library;
+        }
+        
+        private MenuItem helpMenuItem()
+        {
+            MenuItem help = new MenuItem("Help");
 
-    private void OnAbout(object sender, EventArgs args)
-    {
-        AboutDialog dialog = new AboutDialog();
+            Menu helpMenu = new Menu();
+            help.Submenu = helpMenu;
 
-        dialog.ProgramName = "Qualbum";
-        dialog.Version = "0.0.1";
-        dialog.Comments = @"Thanks for using this program. Forward any comments
-            or suggestions to the following website:";
-        dialog.Authors = new string [] {"Jordi Nonell"};
-        dialog.Website = "https://jnonell.com";
+            MenuItem about = new MenuItem("About");
+            about.Activated += OnAbout;
 
-        dialog.Run();
-        dialog.Destroy();
-    }
+            helpMenu.Append(about);
 
-    private void OnConfigure(object sender, EventArgs args)
-    {
-        // Display configure view (like preferences) with options and stuff
-    }
+            return help;
+        }
 
-    private void OnImport(object sender, EventArgs args)
-    {
-        // Select folder to import, and start the import process
+        private void OnExit(object sender, EventArgs args)
+        {
+            presenter.Exit();
+        }
+
+        private void OnAbout(object sender, EventArgs args)
+        {
+            AboutDialog dialog = new AboutDialog();
+
+            dialog.ProgramName = "Qualbum";
+            dialog.Version = "0.0.1";
+            dialog.Comments = @"Thanks for using this program. Forward any comments
+                or suggestions to the following website:";
+            dialog.Authors = new string [] {"Jordi Nonell"};
+            dialog.Website = "https://jnonell.com";
+
+            dialog.Run();
+            dialog.Destroy();
+        }
+
+        private void OnConfigure(object sender, EventArgs args)
+        {
+            // Display configure view (like preferences) with options and stuff
+        }
+
+        private void OnImport(object sender, EventArgs args)
+        {
+            // Select folder to import, and start the import process
+        }
     }
 }

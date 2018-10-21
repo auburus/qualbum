@@ -1,18 +1,21 @@
 using Gtk;
 
-public class MenuPresenter
-{
-    private MenuView view;
+namespace Qualbum {
 
-    public MenuPresenter()
+    public class MenuPresenter
     {
-        this.view = new MenuView(this);
-    }
+        private MenuView view;
 
-    public Widget Widget { get { return this.view.AsWidget; } }
+        public MenuPresenter()
+        {
+            this.view = new MenuView(this);
+        }
 
-    public void Exit()
-    {
-        Application.Quit();
+        public Widget Widget { get { return this.view.AsWidget; } }
+
+        public void Exit()
+        {
+            Application.Quit();
+        }
     }
 }

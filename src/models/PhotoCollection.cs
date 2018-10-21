@@ -3,73 +3,76 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-/// Manages the current state of a photo collection
-class PhotoCollection
-{
-    private List<FileInfo> photos;
-    private int index;
+namespace Qualbum {
 
-
-    public PhotoCollection(IEnumerable<FileInfo> photos)
+    /// Manages the current state of a photo collection
+    class PhotoCollection
     {
-        this.photos = photos.ToList();
-        index = 0;
-    }
+        private List<FileInfo> photos;
+        private int index;
 
-    public PhotoCollection() : this(Enumerable.Empty<FileInfo>()) {}
 
-    public int Count
-    {
-        get {
-            return photos.Count;
+        public PhotoCollection(IEnumerable<FileInfo> photos)
+        {
+            this.photos = photos.ToList();
+            index = 0;
         }
-    }
 
-    public FileInfo Current {
-        get {
-            if (index < 0 || index >= photos.Count)
-            {
-                return null;
+        public PhotoCollection() : this(Enumerable.Empty<FileInfo>()) {}
+
+        public int Count
+        {
+            get {
+                return photos.Count;
             }
-            return photos[index];
         }
-    }
 
-    public int CurrentIndex
-    {
-        get {
-            return index;
+        public FileInfo Current {
+            get {
+                if (index < 0 || index >= photos.Count)
+                {
+                    return null;
+                }
+                return photos[index];
+            }
         }
-    }
 
-    public FileInfo First()
-    {
-        index = 0;
-        return this.Current;
-    }
+        public int CurrentIndex
+        {
+            get {
+                return index;
+            }
+        }
 
-    public FileInfo Next()
-    {
-        index = (index + 1) % this.Count;
-        return this.Current;
-    }
+        public FileInfo First()
+        {
+            index = 0;
+            return this.Current;
+        }
 
-    public FileInfo Prev()
-    {
-        index = (index + (this.Count - 1)) % this.Count;
-        return this.Current;
-    }
+        public FileInfo Next()
+        {
+            index = (index + 1) % this.Count;
+            return this.Current;
+        }
 
-    public void Insert(FileInfo f)
-    {
-        photos.Insert(index, f);
-    }
+        public FileInfo Prev()
+        {
+            index = (index + (this.Count - 1)) % this.Count;
+            return this.Current;
+        }
 
-    public void Remove()
-    {
-        photos.RemoveAt(index);
+        public void Insert(FileInfo f)
+        {
+            photos.Insert(index, f);
+        }
 
-        // Update the index just in case is the last photo
-        index = (index + this.Count) % this.Count;
+        public void Remove()
+        {
+            photos.RemoveAt(index);
+
+            // Update the index just in case is the last photo
+            index = (index + this.Count) % this.Count;
+        }
     }
 }

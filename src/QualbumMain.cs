@@ -1,9 +1,11 @@
 
 
-public class QualbumMain
-{
-    public static void Main()
+namespace Qualbum {
+    public class QualbumMain
     {
-        Qualbum.Run();
+        public static void Main()
+        {
+            Qualbum.Run();
+        }
     }
 }
