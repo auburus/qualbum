@@ -6,13 +6,13 @@ namespace Qualbum
 {
     public class TestImporter : Test
     {
-        LibraryModel library;
+        Library library;
         Importer importer;
 
 
         public override void Setup()
         {
-            library = new LibraryModel(
+            library = new Library(
                 Qualbum.BaseFolder.GetDirectories("test")[0].GetDirectories("library")[0]
             );
             importer = new Importer(this.library);

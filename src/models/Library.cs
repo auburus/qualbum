@@ -8,11 +8,11 @@ namespace Qualbum {
     /// <summary>
     /// A library is the base folder where all photos end up organized
     /// </sumamry>
-    public class LibraryModel
+    public class Library
     {
         private DirectoryInfo baseFolder;
 
-        public LibraryModel(DirectoryInfo dir)
+        public Library(DirectoryInfo dir)
         {
             if (!dir.Exists) {
                 throw new Exception(dir.FullName + " doesn't exist!");
@@ -22,7 +22,7 @@ namespace Qualbum {
 
         }
 
-        public LibraryModel(String path) : this(new DirectoryInfo(path)) 
+        public Library(String path) : this(new DirectoryInfo(path)) 
         {
         }
 

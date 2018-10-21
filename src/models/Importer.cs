@@ -4,12 +4,14 @@ using System.IO;
 using System.Data;
 
 
-namespace Qualbum {
+namespace Qualbum
+{
+
     public class Importer
     {
-        private LibraryModel library;
+        private Library library;
 
-        public Importer(LibraryModel library)
+        public Importer(Library library)
         {
             this.library = library;
             this.createDeletedTable();

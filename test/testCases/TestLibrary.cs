@@ -9,13 +9,13 @@ namespace Qualbum
     {
         public void TestConstructor()
         {
-            LibraryModel lib = new LibraryModel("./test/library");
+            Library lib = new Library("./test/library");
             Assert(lib.BaseFolder.Name == "library");
         }
 
         public void TestSubdirectories()
         {
-            LibraryModel lib = new LibraryModel("./test/library");
+            Library lib = new Library("./test/library");
 
             String[] correctDirs = new String[] {"library",
                 "2017",
@@ -31,7 +31,7 @@ namespace Qualbum
 
         public void TestFindDirectories()
         {
-            LibraryModel lib = new LibraryModel("./test/library");
+            Library lib = new Library("./test/library");
 
             String[] correctDirs = new String[] { "2017-08-12 Anna a Colorado",
                 "2017-09-11 Festa catalans", "2018-03-15 Herman Gulch"};

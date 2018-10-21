@@ -6,7 +6,7 @@ using System.Linq;
 namespace Qualbum {
 
     /// Manages the current state of a photo collection
-    class PhotoCollection
+    public class PhotoCollection
     {
         private List<FileInfo> photos;
         private int index;
@@ -19,6 +19,11 @@ namespace Qualbum {
         }
 
         public PhotoCollection() : this(Enumerable.Empty<FileInfo>()) {}
+
+        public static PhotoCollection CreateFromDirectory(DirectoryInfo dir)
+        {
+            return new PhotoCollection(Finder.FindImages(dir));
+        }
 
         public int Count
         {

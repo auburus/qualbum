@@ -21,7 +21,7 @@ namespace Qualbum
                 toolbar.ToolbarStyle = ToolbarStyle.Icons;
 
                 ToolButton opentb = new ToolButton(Stock.Open);
-                opentb.Clicked += OnChooseFolderClicked;
+                opentb.Clicked += ImportFolderClicked;
 
                 toolbar.Insert(opentb, 0);
 
@@ -29,9 +29,9 @@ namespace Qualbum
             }
         }
 
-        private void OnChooseFolderClicked(object obj, EventArgs args)
+        private void ImportFolderClicked(object obj, EventArgs args)
         {
-            presenter.ShowChooseFolderDialog();
+            presenter.ImportFolder();
         }
     }
 

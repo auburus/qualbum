@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Qualbum {
 
-    class PhotoPresenter
+    public class PhotoPresenter
     {
         private PhotoView view;
         private PhotoCollection collection;
@@ -87,11 +87,10 @@ namespace Qualbum {
             }
         }
 
-        public void WorkingDirectoryChangedHandler(object sender,
-                DirectoryChangedEventArgs eventArgs)
+        public void ChangeCollection(PhotoCollection collection, DirectoryInfo dir)
         {
-            collection = new PhotoCollection(Finder.FindImages(eventArgs.NewDirectory));
-            this.view.ActiveDirectoryLabel.Text = eventArgs.NewDirectory.FullName;
+            this.collection = collection;
+            this.view.ActiveDirectoryLabel.Text = dir.FullName;
             this.FirstPhoto();
         }
 
