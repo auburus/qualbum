@@ -37,8 +37,12 @@ public class Test
                     c.GetMethod("Teardown").Invoke(obj, null);
                     passedTests++;
                 } catch (TargetInvocationException e) {
-                    Console.WriteLine("Assertion failed in <" + c.Name +
-                            "." + m.Name + "()>: " + e.InnerException.Message);
+                    if (e.InnerException is AssertException ) { 
+                        Console.WriteLine("Assertion failed in <" + c.Name +
+                                "." + m.Name + "()>: " + e.InnerException.Message);
+                    } else {
+                        throw;
+                    }
                 }
             }
         }
