@@ -29,6 +29,10 @@ namespace Qualbum
         {
             DirectoryInfo dir = dialogPresenter.ChooseFolderDialog();
 
+            if (dir == null) {
+                return;
+            }
+
             photoPresenter.ChangeCollection(
                 PhotoCollection.CreateFromDirectory(dir),
                 dir

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
@@ -55,6 +56,12 @@ namespace Qualbum
         public virtual void Setup() {}
         public virtual void Teardown() {}
 
+        public static DirectoryInfo BaseFolder {
+            get {
+                return Qualbum.BaseFolder.GetDirectories("test")[0];
+            }
+        }
+
         public void Assert(bool condition)
         {
             if (!condition) {
@@ -82,6 +89,34 @@ namespace Qualbum
             else if (obj1 != obj2) {
                 throw new AssertException("Failed asserting that \"" +
                         obj1.ToString() + "\" is equal to \"" + obj2.ToString() + "\"");
+            }
+        }
+
+        public void AssertEqual(double num1, double num2) {
+            if (num1 != num2) {
+                throw new AssertException("Failed asserting that " +
+                        num1.ToString() + " is equal to " + num2.ToString());
+            }
+        }
+
+        public void AssertEqual(int num1, int num2) {
+            if (num1 != num2) {
+                throw new AssertException("Failed asserting that " +
+                        num1.ToString() + " is equal to " + num2.ToString());
+            }
+        }
+
+        public void AssertGreater(double num1, double num2) {
+            if (num1 <= num2) {
+                throw new AssertException("Failed asserting that " +
+                        num1.ToString() + " is greater than " + num2.ToString());
+            }
+        }
+
+        public void AssertGreater(int num1, int num2) {
+            if (num1 <= num2) {
+                throw new AssertException("Failed asserting that " +
+                        num1.ToString() + " is greater than " + num2.ToString());
             }
         }
 
