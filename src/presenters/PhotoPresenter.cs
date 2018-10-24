@@ -43,6 +43,20 @@ namespace Qualbum {
             Display(collection.Current);
         }
 
+        public void RestoreLastPhoto()
+        {
+            FileInfo photoFile = importer.RestoreLast();
+
+            if (photoFile != null)
+            {
+                collection.Insert(photoFile);
+                Display(collection.Current);
+            } else {
+                // TODO Alert there are no photos to restore
+            }
+        }
+
+
         // Proxy function until we finish refactoring
         public void Display(FileInfo photoFile)
         {

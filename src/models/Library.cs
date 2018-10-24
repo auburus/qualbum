@@ -3,8 +3,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Data.Sqlite;
+using System.Drawing;
 
 namespace Qualbum {
+
     /// <summary>
     /// A library is the base folder where all photos end up organized
     /// </sumamry>
@@ -18,8 +20,7 @@ namespace Qualbum {
                 throw new Exception(dir.FullName + " doesn't exist!");
             }
             this.baseFolder = dir;
-            this.checkOrCreateQualbumFolder();
-
+            this.Init();
         }
 
         public Library(String path) : this(new DirectoryInfo(path)) 
@@ -80,11 +81,53 @@ namespace Qualbum {
             }
         }
 
+        public PhotoCollection PhotoCollection
+        {
+            get {
+                return PhotoCollection.CreateFromDirectory(this.baseFolder);
+            }
+        }
+
+
         /// Prepare all the things for this folder to be a library
         public void Init()
         {
-            // TODO
-            
+            // TODO Complete initialization
+            checkOrCreateQualbumFolder();
+        }
+
+        public void ComputeHashes()
+        {
+            Console.WriteLine("Computing hashes");
+            foreach(FileInfo file in this.PhotoCollection)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Console.Write(Finder.FindRelativePath(this.baseFolder, file));
+                Console.Write(": ");
+                Console.WriteLine(hash(file));
+            }
+        }
+
+        // TODO change to a collection
+        public IEnumerable<FileInfo> FindInvalidPhotos()
+        {
+            return this.PhotoCollection.Where( x => !this.IsPhotoValid(x));
+        }
+
+        /// Attempt to load it, and if it fails, is not valid
+        private bool IsPhotoValid(FileInfo photo)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            try {
+                Bitmap bmp = new Bitmap(photo.FullName);
+                return true;
+            } catch (ArgumentException) {
+                return false;
+            }
         }
 
         private void checkOrCreateQualbumFolder()
@@ -97,6 +140,19 @@ namespace Qualbum {
             if ( ! qualbumFolder.Attributes.HasFlag(FileAttributes.Hidden)) {
                 qualbumFolder.Attributes |= FileAttributes.Hidden;
             }
+
+            try {
+                qualbumFolder.CreateSubdirectory("deleted");
+            } catch (IOException) {
+                // Do nothing, because the directory already exists
+                // There is the possibility that it can't be created for other reasons
+                // (i.e. hard disk full), so TODO check on that
+            }
+        }
+
+        private ulong hash(FileInfo file)
+        {
+            return ImageHashing.ImageHashing.AverageHash(file.FullName);
         }
     }
 }

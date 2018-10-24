@@ -48,7 +48,7 @@ namespace Qualbum
                 return f.Name;
             }
 
-            return guessedDate.ToString("ddMMyyyy");
+            return guessedDate.ToString("yyyyMMdd");
         }
 
         /**

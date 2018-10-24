@@ -6,7 +6,7 @@ using System.Linq;
 namespace Qualbum {
 
     /// Manages the current state of a photo collection
-    public class PhotoCollection
+    public class PhotoCollection : IEnumerable<FileInfo>
     {
         private List<FileInfo> photos;
         private int index;
@@ -78,6 +78,16 @@ namespace Qualbum {
 
             // Update the index just in case is the last photo
             index = (index + this.Count) % this.Count;
+        }
+
+        public IEnumerator<FileInfo> GetEnumerator()
+        {
+            return photos.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

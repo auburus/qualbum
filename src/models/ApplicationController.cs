@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Gtk;
 using Gdk;
@@ -64,10 +65,9 @@ namespace Qualbum
                         ImportFolder();
                         break;
 
-                    case Gdk.Key.h:
-                        photoPresenter.NextPhoto();
+                    case Gdk.Key.z:
+                        photoPresenter.RestoreLastPhoto();
                         break;
-
                 }
             }
             else if ((args.Event.State & Gdk.ModifierType.ShiftMask) ==
